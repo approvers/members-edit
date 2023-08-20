@@ -24,10 +24,7 @@ const openAuthorizationPopup = (state: string) => {
         scope: "identify guilds.members.read",
         state,
     });
-    const url = new URL(
-        "/api/v10/oauth2/authorize?" + params,
-        "https://discord.com",
-    );
+    const url = new URL("/oauth2/authorize?" + params, "https://discord.com");
     const POPUP_WIDTH = 600;
     const POPUP_HEIGHT = 600;
     const top = window.outerHeight / 2 + window.screenY - POPUP_HEIGHT / 2;
