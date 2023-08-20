@@ -64,9 +64,9 @@ export const useOAuth = (): UseOAuthReturns => {
         saveState(state);
         popupRef.current = openAuthorizationPopup(state);
 
-        const handleMessage = async ({ data }: MessageEvent) => {
+        const handleMessage = async ({ data, origin }: MessageEvent) => {
             const { type } = data;
-            if (typeof type !== "string") {
+            if (typeof type !== "string" || origin !== window.location.origin) {
                 return;
             }
             if (type === "ERROR") {
