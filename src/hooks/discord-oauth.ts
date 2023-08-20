@@ -67,8 +67,6 @@ export const useOAuth = (): UseOAuthReturns => {
         const handleMessage = async ({ data }: MessageEvent) => {
             const { type } = data;
             if (typeof type !== "string") {
-                console.error("invalid message");
-                console.dir(data);
                 return;
             }
             if (type === "ERROR") {
