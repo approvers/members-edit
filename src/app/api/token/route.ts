@@ -19,7 +19,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         client_id: clientId,
         client_secret: clientSecret,
         grant_type: "authorization_code",
-        redirect_uri: new URL("/redirect", window.location.href).toString(),
+        redirect_uri: new URL("/callback", window.location.href).toString(),
         code,
     });
     const url = new URL(
