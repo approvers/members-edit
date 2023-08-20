@@ -126,6 +126,7 @@ export const useOAuth = (): UseOAuthReturns => {
         if (refresher === null) {
             return;
         }
+        const abort = new AbortController();
         const refreshTimer = setTimeout(async () => {
             const refreshRes = await fetch("/refresh", {
                 method: "POST",
@@ -135,6 +136,7 @@ export const useOAuth = (): UseOAuthReturns => {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                signal: abort.signal,
             });
             if (!refreshRes.ok) {
                 console.error(await refreshRes.text());
@@ -149,6 +151,7 @@ export const useOAuth = (): UseOAuthReturns => {
         }, refresher.expiresIn * 1000);
         return () => {
             clearTimeout(refreshTimer);
+            abort.abort();
         };
     }, [refresher]);
 
