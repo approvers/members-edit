@@ -18,7 +18,7 @@ const newState = () => {
 const openAuthorizationPopup = (state: string) => {
     const params = new URLSearchParams({
         client_id: "1141210184505639003",
-        redirect_uri: new URL("/callback", window.location.href).toString(),
+        redirect_uri: new URL("/redirect", window.location.href).toString(),
         response_type: "code",
         scope: "identify guilds.members.read",
         state,
