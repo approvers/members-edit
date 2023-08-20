@@ -38,76 +38,12 @@ type TokenResponse = {
     scope: string;
 };
 
-const getNewToken = async ({
-    code,
-    clientId,
-    clientSecret,
-}: {
-    code: string;
-    clientId: string;
-    clientSecret: string;
-}): Promise<TokenResponse> => {
-    const params = new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: "authorization_code",
-        redirect_uri: encodeURIComponent(
-            new URL("/redirect", window.location.href).toString(),
-        ),
-        code,
-    });
-    const url = new URL(
-        "/api/v10/oauth2/token?" + params,
-        "https://discord.com",
-    );
-    const res = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-    });
-    return res.json();
-};
-
-const refreshExistingToken = async ({
-    refreshToken,
-    clientId,
-    clientSecret,
-}: {
-    refreshToken: string;
-    clientId: string;
-    clientSecret: string;
-}): Promise<TokenResponse> => {
-    const params = new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: "refresh_token",
-        refresh_token: refreshToken,
-    });
-    const url = new URL(
-        "/api/v10/oauth2/token?" + params,
-        "https://discord.com",
-    );
-    const res = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-    });
-    return res.json();
-};
-
-export interface UseOAuthOptions {
-    clientId: string;
-    clientSecret: string;
-}
-
 export type UseOAuthReturns =
     | [state: "LOADING"]
     | [state: "GOT_TOKEN", token: string]
     | [state: "GOT_ERROR", error: Error];
 
-export const useOAuth = (options: UseOAuthOptions): UseOAuthReturns => {
+export const useOAuth = (): UseOAuthReturns => {
     const popupRef = useRef<Window | null>(null);
     const [refresher, setRefresher] = useState<{
         refreshToken: string;
@@ -138,10 +74,14 @@ export const useOAuth = (options: UseOAuthOptions): UseOAuthReturns => {
                 console.dir(data);
                 return;
             }
-            const response = await getNewToken({
-                code,
-                ...options,
-            });
+            const response: TokenResponse = await (
+                await fetch("/api/token", {
+                    body: JSON.stringify({ code }),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+            ).json();
             setRefresher({
                 refreshToken: response.refresh_token,
                 expiresIn: response.expires_in,
@@ -166,17 +106,23 @@ export const useOAuth = (options: UseOAuthOptions): UseOAuthReturns => {
             window.removeEventListener("message", handleMessage);
             removeState();
         };
-    }, [options]);
+    }, []);
 
     useEffect(() => {
         if (refresher === null) {
             return;
         }
         const refreshTimer = setTimeout(async () => {
-            const response = await refreshExistingToken({
-                refreshToken: refresher.refreshToken,
-                ...options,
-            });
+            const response: TokenResponse = await (
+                await fetch("/api/refresh", {
+                    body: JSON.stringify({
+                        refreshToken: refresher.refreshToken,
+                    }),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+            ).json();
             setRefresher({
                 refreshToken: response.refresh_token,
                 expiresIn: response.expires_in,
@@ -186,7 +132,7 @@ export const useOAuth = (options: UseOAuthOptions): UseOAuthReturns => {
         return () => {
             clearTimeout(refreshTimer);
         };
-    }, [options, refresher]);
+    }, [refresher]);
 
     return returns;
 };
