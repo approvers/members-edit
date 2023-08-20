@@ -33,5 +33,5 @@ export async function POST(request: Request): Promise<NextResponse> {
         },
     });
 
-    return NextResponse.json(await res.json());
+    return NextResponse.json(await res.json(), { status: res.status });
 }
