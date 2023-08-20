@@ -1,13 +1,13 @@
+import { DISCORD_CLIENT_ID } from "@/store/consts";
 import { NextResponse } from "next/server";
 
 export const runtime = "edge";
 
 export async function POST(request: Request): Promise<NextResponse> {
-    const clientId = process.env.DISCORD_CLIENT_ID;
     const clientSecret = process.env.DISCORD_CLIENT_SECRET;
 
-    if (!clientId || !clientSecret) {
-        console.error("DISCORD_CLIENT_ID or DISCORD_CLIENT_SECRET was not set");
+    if (!clientSecret) {
+        console.error("DISCORD_CLIENT_SECRET was not set");
         return NextResponse.json({}, { status: 500 });
     }
 
@@ -16,7 +16,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         return NextResponse.json({}, { status: 400 });
     }
     const params = new URLSearchParams({
-        client_id: clientId,
+        client_id: DISCORD_CLIENT_ID,
         client_secret: clientSecret,
         grant_type: "authorization_code",
         redirect_uri: new URL("/redirect", request.url).toString(),

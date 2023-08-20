@@ -1,5 +1,6 @@
 "use client";
 
+import { DISCORD_CLIENT_ID } from "@/store/consts";
 import { removeState, saveState } from "@/store/state";
 import { useEffect, useRef, useState } from "react";
 
@@ -17,7 +18,7 @@ const newState = () => {
 
 const openAuthorizationPopup = (state: string) => {
     const params = new URLSearchParams({
-        client_id: "1141210184505639003",
+        client_id: DISCORD_CLIENT_ID,
         redirect_uri: new URL("/redirect", window.location.href).toString(),
         response_type: "code",
         scope: "identify guilds.members.read",
