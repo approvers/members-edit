@@ -1,29 +1,10 @@
 "use client";
 
+import { openPopupInCenter } from "@/portal/popup";
 import { DISCORD_CLIENT_ID } from "@/store/consts";
 import { removeState, saveState } from "@/store/state";
 import { generate } from "randomstring";
 import { useEffect, useRef, useState } from "react";
-
-const openAuthorizationPopup = (state: string) => {
-    const params = new URLSearchParams({
-        client_id: DISCORD_CLIENT_ID,
-        redirect_uri: new URL("/redirect", window.location.href).toString(),
-        response_type: "code",
-        scope: "identify guilds.members.read",
-        state,
-    });
-    const url = new URL("/oauth2/authorize?" + params, "https://discord.com");
-    const POPUP_WIDTH = 600;
-    const POPUP_HEIGHT = 600;
-    const top = window.outerHeight / 2 + window.screenY - POPUP_HEIGHT / 2;
-    const left = window.outerWidth / 2 + window.screenX - POPUP_WIDTH / 2;
-    return window.open(
-        url,
-        "Discord OAuth2",
-        `height=${POPUP_HEIGHT},width=${POPUP_WIDTH},top=${top},left=${left}`,
-    );
-};
 
 type TokenResponse = {
     access_token: string;
@@ -49,7 +30,19 @@ export const useOAuth = (): UseOAuthReturns => {
     useEffect(() => {
         const state = generate(40);
         saveState(state);
-        popupRef.current = openAuthorizationPopup(state);
+
+        const params = new URLSearchParams({
+            client_id: DISCORD_CLIENT_ID,
+            redirect_uri: new URL("/redirect", window.location.href).toString(),
+            response_type: "code",
+            scope: "identify guilds.members.read",
+            state,
+        });
+        const url = new URL(
+            "/oauth2/authorize?" + params,
+            "https://discord.com",
+        );
+        popupRef.current = openPopupInCenter(url);
 
         const handleMessage = async ({ data, origin }: MessageEvent) => {
             const { type } = data;
