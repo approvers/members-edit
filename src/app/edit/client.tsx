@@ -28,7 +28,14 @@ export const EditLogin = (): JSX.Element => {
     const oauth = useOAuth();
     switch (oauth[0]) {
         case "LOADING":
-            return <h1>ログイン中…</h1>;
+            return (
+                <main>
+                    <h1>ログイン中…</h1>
+                    <p>
+                        ログイン認証ウインドウのポップアップを許可してください
+                    </p>
+                </main>
+            );
         case "GOT_ERROR":
             console.error(oauth[1]);
             return (
