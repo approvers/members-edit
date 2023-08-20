@@ -28,6 +28,9 @@ export const useAssociations = (token: string): UseAssociationReturns => {
             const associationsRes = await fetch(
                 `https://members.approvers.dev/members/${discordId}/associations`,
                 {
+                    headers: {
+                        Authorization: "Bearer " + token,
+                    },
                     signal: abort.signal,
                 },
             );
