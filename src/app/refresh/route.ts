@@ -16,21 +16,19 @@ export async function POST(request: Request): Promise<NextResponse> {
         return NextResponse.json({}, { status: 400 });
     }
 
-    const params = new URLSearchParams({
+    const body = new URLSearchParams({
         client_id: clientId,
         client_secret: clientSecret,
         grant_type: "refresh_token",
         refresh_token: refreshToken,
     });
-    const url = new URL(
-        "/api/v10/oauth2/token?" + params,
-        "https://discord.com",
-    );
+    const url = new URL("/api/v10/oauth2/token", "https://discord.com");
     const res = await fetch(url, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
         },
+        body,
     });
 
     return NextResponse.json(await res.json(), { status: res.status });
