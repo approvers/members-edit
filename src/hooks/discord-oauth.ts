@@ -1,3 +1,5 @@
+"use client";
+
 import { removeState, saveState } from "@/store/state";
 import { useEffect, useRef, useState } from "react";
 
