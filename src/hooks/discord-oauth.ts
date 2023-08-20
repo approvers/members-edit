@@ -80,7 +80,7 @@ export const useOAuth = (): UseOAuthReturns => {
                 console.dir(data);
                 return;
             }
-            const tokenRes = await fetch("/api/token", {
+            const tokenRes = await fetch("/token", {
                 method: "POST",
                 body: JSON.stringify({ code }),
                 headers: {
@@ -123,7 +123,7 @@ export const useOAuth = (): UseOAuthReturns => {
             return;
         }
         const refreshTimer = setTimeout(async () => {
-            const refreshRes = await fetch("/api/refresh", {
+            const refreshRes = await fetch("/refresh", {
                 method: "POST",
                 body: JSON.stringify({
                     refreshToken: refresher.refreshToken,
