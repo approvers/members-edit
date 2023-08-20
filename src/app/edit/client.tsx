@@ -10,16 +10,26 @@ const EditConsole = ({ token }: { token: string }): JSX.Element => {
         case "LOADING":
             return <h1>読み込み中…</h1>;
     }
+    const list = associations[1];
     return (
-        <main>
-            <ol>
-                {associations[1].map(({ type, id, name }) => (
-                    <li key={`${type}-${id}`}>
-                        <span>{type}</span>
-                        <span>{name}</span>
-                    </li>
-                ))}
-            </ol>
+        <main className="flex min-h-screen flex-col items-center justify-center gap-4">
+            <h1 className="text-xl font-bold">Approvers メンバー情報編集</h1>
+            {list.length === 0 ? (
+                <p>関連付けられたアカウントはありません</p>
+            ) : (
+                <ol>
+                    {list.map(({ type, id, name }) => (
+                        <li key={`${type}-${id}`}>
+                            <span>{type}</span>
+                            <span>{name}</span>
+                        </li>
+                    ))}
+                </ol>
+            )}
+            <div className="flex gap-8">
+                <button className="">アカウントを追加</button>
+                <button className="">保存</button>
+            </div>
         </main>
     );
 };
