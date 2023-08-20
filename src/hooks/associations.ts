@@ -36,6 +36,7 @@ export const useAssociations = (token: string): UseAssociationReturns => {
             );
             if (!associationsRes.ok) {
                 setReturns(["GOT", []]);
+                return;
             }
             const associations = await associationsRes.json();
             setReturns(["GOT", associations]);
