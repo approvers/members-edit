@@ -82,6 +82,7 @@ export const useOAuth = (): UseOAuthReturns => {
             }
             const response: TokenResponse = await (
                 await fetch("/api/token", {
+                    method: "POST",
                     body: JSON.stringify({ code }),
                     headers: {
                         "Content-Type": "application/json",
@@ -121,6 +122,7 @@ export const useOAuth = (): UseOAuthReturns => {
         const refreshTimer = setTimeout(async () => {
             const response: TokenResponse = await (
                 await fetch("/api/refresh", {
+                    method: "POST",
                     body: JSON.stringify({
                         refreshToken: refresher.refreshToken,
                     }),
