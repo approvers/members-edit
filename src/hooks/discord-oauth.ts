@@ -80,15 +80,18 @@ export const useOAuth = (): UseOAuthReturns => {
                 console.dir(data);
                 return;
             }
-            const response: TokenResponse = await (
-                await fetch("/api/token", {
-                    method: "POST",
-                    body: JSON.stringify({ code }),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-            ).json();
+            const tokenRes = await fetch("/api/token", {
+                method: "POST",
+                body: JSON.stringify({ code }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!tokenRes.ok) {
+                console.error(await tokenRes.text());
+                return;
+            }
+            const response: TokenResponse = await tokenRes.json();
             setRefresher({
                 refreshToken: response.refresh_token,
                 expiresIn: response.expires_in,
@@ -120,17 +123,20 @@ export const useOAuth = (): UseOAuthReturns => {
             return;
         }
         const refreshTimer = setTimeout(async () => {
-            const response: TokenResponse = await (
-                await fetch("/api/refresh", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        refreshToken: refresher.refreshToken,
-                    }),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-            ).json();
+            const refreshRes = await fetch("/api/refresh", {
+                method: "POST",
+                body: JSON.stringify({
+                    refreshToken: refresher.refreshToken,
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!refreshRes.ok) {
+                console.error(await refreshRes.text());
+                return;
+            }
+            const response: TokenResponse = await refreshRes.json();
             setRefresher({
                 refreshToken: response.refresh_token,
                 expiresIn: response.expires_in,
