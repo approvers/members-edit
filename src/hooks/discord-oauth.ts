@@ -1,8 +1,8 @@
 "use client";
 
-import { newState } from "@/app/cryptic/random-state";
 import { DISCORD_CLIENT_ID } from "@/store/consts";
 import { removeState, saveState } from "@/store/state";
+import { generate } from "randomstring";
 import { useEffect, useRef, useState } from "react";
 
 const openAuthorizationPopup = (state: string) => {
@@ -47,7 +47,7 @@ export const useOAuth = (): UseOAuthReturns => {
     const [returns, setReturns] = useState<UseOAuthReturns>(["LOADING"]);
 
     useEffect(() => {
-        const state = newState();
+        const state = generate(40);
         saveState(state);
         popupRef.current = openAuthorizationPopup(state);
 
