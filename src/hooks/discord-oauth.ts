@@ -112,6 +112,10 @@ export const useOAuth = (): UseOAuthReturns => {
         }, 1000);
 
         return () => {
+            if (popupRef.current) {
+                popupRef.current.close();
+                popupRef.current = null;
+            }
             clearInterval(disconnectionWatchdog);
             window.removeEventListener("message", handleMessage);
             removeState();
