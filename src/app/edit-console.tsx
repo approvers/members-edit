@@ -105,7 +105,7 @@ const EditableList = ({
             abort.abort();
             popupRef.current = null;
         };
-    }, [challenge]);
+    }, [challenge, popupRef]);
 
     async function handleAddTwitterAccount() {
         const randomState = generate(40);
