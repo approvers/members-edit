@@ -65,6 +65,7 @@ const useDiscordOAuth = (): [OAuthProgress, () => void] => {
             ]);
             removeState();
             window.removeEventListener("message", handleMessage);
+            popupRef.current = null;
         };
 
         const disconnectionWatchdog = setInterval(() => {
