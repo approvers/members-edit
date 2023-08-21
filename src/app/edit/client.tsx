@@ -2,12 +2,12 @@
 
 import { AssociationLink, useAssociations } from "@/hooks/associations";
 import { useOAuth } from "@/hooks/discord-oauth";
-import { useReducer } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { nextState } from "./reducer";
 import { TWITTER_CLIENT_ID } from "@/store/consts";
 import { generate } from "randomstring";
 import { openPopupInCenter } from "@/portal/popup";
-import { saveState } from "@/store/state";
+import { removeState, saveState } from "@/store/state";
 import { Client } from "twitter-api-sdk";
 
 const AccountList = ({
@@ -33,7 +33,91 @@ const EditableList = ({
 }: {
     defaultList: readonly AssociationLink[];
 }) => {
+    const popupRef = useRef<Window | null>(null);
+    const [challenge, setChallenge] = useState<string | null>(null);
     const [state, dispatch] = useReducer(nextState, { links: defaultList });
+
+    useEffect(() => {
+        if (!popupRef.current || !challenge) {
+            return;
+        }
+        const popupWindow = popupRef.current;
+        const abort = new AbortController();
+
+        const handleMessage = async (message: MessageEvent) => {
+            if (message.origin !== window.location.origin) {
+                return;
+            }
+
+            const { code } = message.data;
+            if (typeof code !== "string") {
+                console.dir(message.data);
+                throw new Error("invalid data");
+            }
+            const body = new URLSearchParams({
+                code,
+                grant_type: "authorization_code",
+                client_id: TWITTER_CLIENT_ID,
+                redirect_uri: new URL(
+                    "/twitter-id",
+                    window.location.href,
+                ).toString(),
+                code_verifier: challenge,
+            });
+            const tokenRes = await fetch(
+                "https://api.twitter.com/2/oauth2/token",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body,
+                    signal: abort.signal,
+                },
+            );
+            if (!tokenRes.ok) {
+                console.error(await tokenRes.text());
+                return;
+            }
+            const { access_token } = await tokenRes.json();
+
+            const client = new Client(access_token);
+            const findRes = await client.users.findMyUser({
+                "user.fields": ["id", "username"],
+            });
+            if (!findRes.data) {
+                console.error(findRes.errors);
+                return;
+            }
+            const { id, username } = findRes.data;
+
+            if (abort.signal.aborted) {
+                return;
+            }
+            dispatch({
+                type: "ADD_LINK",
+                link: { type: "twitter", id, name: username },
+            });
+        };
+
+        popupWindow.addEventListener("message", handleMessage);
+
+        const cleanup = () => {
+            clearInterval(connectionWatchdog);
+            removeState();
+            popupWindow.removeEventListener("message", handleMessage);
+            abort.abort();
+        };
+
+        const connectionWatchdog = setInterval(async () => {
+            const popupOpen = !popupWindow.window?.closed ?? false;
+            if (popupOpen) {
+                return;
+            }
+            cleanup();
+        }, 1000);
+        return cleanup;
+    }, [challenge]);
 
     async function handleAddTwitterAccount() {
         const randomState = generate(40);
@@ -59,67 +143,11 @@ const EditableList = ({
             "/i/oauth2/authorize?" + params,
             "https://twitter.com",
         );
-        const popupWindow = openPopupInCenter(twitterOAuthLink);
-        if (!popupWindow) {
-            return;
-        }
-
-        const code = await new Promise<string>((resolve, reject) => {
-            popupWindow?.addEventListener("message", async (message) => {
-                if (message.origin !== window.location.origin) {
-                    return;
-                }
-
-                const { code } = message.data;
-                if (typeof code !== "string") {
-                    console.dir(message.data);
-                    reject(new Error("invalid data"));
-                    return;
-                }
-                resolve(code);
-            });
-            popupWindow?.addEventListener("messageerror", (event) => {
-                reject(event.data);
-            });
-        });
-
-        const body = new URLSearchParams({
-            code,
-            grant_type: "authorization_code",
-            client_id: TWITTER_CLIENT_ID,
-            redirect_uri: new URL(
-                "/twitter-id",
-                window.location.href,
-            ).toString(),
-            code_verifier: randomChallenge,
-        });
-        const tokenRes = await fetch("https://api.twitter.com/2/oauth2/token", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body,
-        });
-        if (!tokenRes.ok) {
-            console.error(await tokenRes.text());
-            return;
-        }
-        const { access_token } = await tokenRes.json();
-
-        const client = new Client(access_token);
-        const findRes = await client.users.findMyUser({
-            "user.fields": ["id", "username"],
-        });
-        if (!findRes.data) {
-            console.error(findRes.errors);
-            return;
-        }
-        const { id, username } = findRes.data;
-
-        dispatch({
-            type: "ADD_LINK",
-            link: { type: "twitter", id, name: username },
-        });
+        popupRef.current = openPopupInCenter(
+            twitterOAuthLink,
+            "twitter-oauth2",
+        );
+        setChallenge(randomChallenge);
     }
 
     return (
