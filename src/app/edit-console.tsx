@@ -1,7 +1,6 @@
 "use client";
 
 import { AssociationLink, useAssociations } from "@/hooks/associations";
-import { useOAuth } from "@/hooks/discord-oauth";
 import { useEffect, useReducer, useRef, useState } from "react";
 import { nextState } from "./reducer";
 import { TWITTER_CLIENT_ID } from "@/store/consts";
@@ -168,7 +167,7 @@ const EditableList = ({
     );
 };
 
-const EditConsole = ({ token }: { token: string }): JSX.Element => {
+export const EditConsole = ({ token }: { token: string }): JSX.Element => {
     const associations = useAssociations(token);
 
     if (associations[0] === "LOADING") {
@@ -176,35 +175,5 @@ const EditConsole = ({ token }: { token: string }): JSX.Element => {
     }
     const list = associations[1];
 
-    return (
-        <main className="flex min-h-screen flex-col items-center justify-center gap-4">
-            <h1 className="text-xl font-bold">Approvers メンバー情報編集</h1>
-            <EditableList defaultList={list} />
-        </main>
-    );
-};
-
-export const EditLogin = (): JSX.Element => {
-    const oauth = useOAuth();
-    switch (oauth[0]) {
-        case "LOADING":
-            return (
-                <main>
-                    <h1>ログイン中…</h1>
-                    <p>
-                        ログイン認証ウインドウのポップアップを許可してください
-                    </p>
-                </main>
-            );
-        case "GOT_ERROR":
-            console.error(oauth[1]);
-            return (
-                <main>
-                    <h1>エラーが発生しました</h1>
-                    <p>{oauth[1].message}</p>
-                </main>
-            );
-        case "GOT_TOKEN":
-            return <EditConsole token={oauth[1]} />;
-    }
+    return <EditableList defaultList={list} />;
 };

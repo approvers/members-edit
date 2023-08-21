@@ -5,52 +5,29 @@ import { DISCORD_CLIENT_ID } from "@/store/consts";
 import { removeState, saveState } from "@/store/state";
 import { generate } from "randomstring";
 import { useEffect, useRef, useState } from "react";
+import { EditConsole } from "./edit-console";
 
-type TokenResponse = {
-    access_token: string;
-    token_type: "Bearer";
-    expires_in: number;
-    refresh_token: string;
-    scope: string;
-};
-
-export type UseOAuthReturns =
+export type OAuthProgress =
     | [state: "LOADING"]
     | [state: "GOT_TOKEN", token: string]
     | [state: "GOT_ERROR", error: Error];
 
-export const useOAuth = (): UseOAuthReturns => {
+export const IndexClient = (): JSX.Element => {
     const popupRef = useRef<Window | null>(null);
     const [refresher, setRefresher] = useState<{
         refreshToken: string;
         expiresIn: number;
     } | null>(null);
-    const [returns, setReturns] = useState<UseOAuthReturns>(["LOADING"]);
+    const [progress, setProgress] = useState<OAuthProgress>(["LOADING"]);
 
     useEffect(() => {
-        const state = generate(40);
-        saveState(state);
-
-        const params = new URLSearchParams({
-            client_id: DISCORD_CLIENT_ID,
-            redirect_uri: new URL("/redirect", window.location.href).toString(),
-            response_type: "code",
-            scope: "identify guilds.members.read",
-            state,
-        });
-        const url = new URL(
-            "/oauth2/authorize?" + params,
-            "https://discord.com",
-        );
-        popupRef.current = openPopupInCenter(url, "discord-oauth2");
-
         const handleMessage = async ({ data, origin }: MessageEvent) => {
             const { type } = data;
             if (typeof type !== "string" || origin !== window.location.origin) {
                 return;
             }
             if (type === "ERROR") {
-                setReturns(["GOT_ERROR", data.error]);
+                setProgress(["GOT_ERROR", data.error]);
                 return;
             }
 
@@ -71,35 +48,34 @@ export const useOAuth = (): UseOAuthReturns => {
                 console.error(await tokenRes.text());
                 return;
             }
-            const response: TokenResponse = await tokenRes.json();
+            const response = await tokenRes.json();
             setRefresher({
                 refreshToken: response.refresh_token,
                 expiresIn: response.expires_in,
             });
-            setReturns(["GOT_TOKEN", response.access_token]);
+            setProgress(["GOT_TOKEN", response.access_token]);
         };
         window.addEventListener("message", handleMessage);
+
+        const cleanup = () => {
+            clearInterval(disconnectionWatchdog);
+            setProgress([
+                "GOT_ERROR",
+                new Error("popup was closed forcefully"),
+            ]);
+            removeState();
+            window.removeEventListener("message", handleMessage);
+        };
 
         const disconnectionWatchdog = setInterval(() => {
             const popupOpen = !popupRef.current?.window?.closed ?? false;
             if (popupOpen) {
                 return;
             }
-            clearInterval(disconnectionWatchdog);
-            setReturns(["GOT_ERROR", new Error("popup was closed forcefully")]);
-            removeState();
-            window.removeEventListener("message", handleMessage);
+            cleanup();
         }, 1000);
 
-        return () => {
-            if (popupRef.current) {
-                popupRef.current.close();
-                popupRef.current = null;
-            }
-            clearInterval(disconnectionWatchdog);
-            window.removeEventListener("message", handleMessage);
-            removeState();
-        };
+        return cleanup;
     }, []);
 
     useEffect(() => {
@@ -122,12 +98,12 @@ export const useOAuth = (): UseOAuthReturns => {
                 console.error(await refreshRes.text());
                 return;
             }
-            const response: TokenResponse = await refreshRes.json();
+            const response = await refreshRes.json();
             setRefresher({
                 refreshToken: response.refresh_token,
                 expiresIn: response.expires_in,
             });
-            setReturns(["GOT_TOKEN", response.access_token]);
+            setProgress(["GOT_TOKEN", response.access_token]);
         }, refresher.expiresIn * 1000);
         return () => {
             clearTimeout(refreshTimer);
@@ -135,5 +111,45 @@ export const useOAuth = (): UseOAuthReturns => {
         };
     }, [refresher]);
 
-    return returns;
+    async function handleLogin() {
+        const state = generate(40);
+        saveState(state);
+
+        const params = new URLSearchParams({
+            client_id: DISCORD_CLIENT_ID,
+            redirect_uri: new URL("/redirect", window.location.href).toString(),
+            response_type: "code",
+            scope: "identify guilds.members.read",
+            state,
+        });
+        const url = new URL(
+            "/oauth2/authorize?" + params,
+            "https://discord.com",
+        );
+        popupRef.current = openPopupInCenter(url, "discord-oauth2");
+    }
+
+    const loginButton = (
+        <button
+            className="bg-indigo-500 text-slate-100 p-4 rounded-2xl"
+            onClick={handleLogin}
+        >
+            Discord でログイン
+        </button>
+    );
+
+    switch (progress[0]) {
+        case "LOADING":
+            return loginButton;
+        case "GOT_ERROR":
+            return (
+                <>
+                    {loginButton}
+                    <h2>ログインに失敗しました</h2>
+                    <p>{progress[1].message}</p>
+                </>
+            );
+        case "GOT_TOKEN":
+            return <EditConsole token={progress[1]} />;
+    }
 };
