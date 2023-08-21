@@ -42,7 +42,7 @@ export const useOAuth = (): UseOAuthReturns => {
             "/oauth2/authorize?" + params,
             "https://discord.com",
         );
-        popupRef.current = openPopupInCenter(url);
+        popupRef.current = openPopupInCenter(url, "discord-oauth2");
 
         const handleMessage = async ({ data, origin }: MessageEvent) => {
             const { type } = data;
