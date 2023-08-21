@@ -105,6 +105,7 @@ const EditableList = ({
             removeState();
             window.removeEventListener("message", handleMessage);
             abort.abort();
+            popupRef.current = null;
         };
 
         const connectionWatchdog = setInterval(async () => {
