@@ -1,7 +1,7 @@
 "use client";
 
 import { AssociationLink, useAssociations } from "@/hooks/associations";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { nextState } from "./reducer";
 import { FaGithub, FaTwitter } from "react-icons/fa/";
 import { useTwitterOAuth } from "@/hooks/twitter";
@@ -36,8 +36,9 @@ const EditableList = ({
     onSave,
 }: {
     defaultList: readonly AssociationLink[];
-    onSave: (newList: readonly AssociationLink[]) => void;
+    onSave: (newList: readonly AssociationLink[]) => Promise<void>;
 }) => {
+    const [saving, setSaving] = useState(false);
     const [state, dispatch] = useReducer(nextState, { links: defaultList });
     const handleAddTwitterAccount = useTwitterOAuth(({ id, username }) => {
         dispatch({
@@ -53,7 +54,10 @@ const EditableList = ({
     });
 
     function handleSave() {
-        onSave(state.links);
+        setSaving(true);
+        onSave(state.links).then(() => {
+            setSaving(false);
+        });
     }
 
     return (
@@ -73,8 +77,9 @@ const EditableList = ({
                     GitHub アカウントを追加
                 </button>
                 <button
-                    className="bg-slate-700 text-slate-100 p-4 rounded-2xl"
+                    className="bg-slate-700 disabled:blur-sm text-slate-100 p-4 rounded-2xl"
                     onClick={handleSave}
+                    disabled={saving}
                 >
                     保存
                 </button>
