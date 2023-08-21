@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { Client } from "twitter-api-sdk";
 
 export const runtime = "edge";
 
@@ -8,12 +7,13 @@ export async function GET(request: Request): Promise<NextResponse> {
     if (!auth || !auth.startsWith("Bearer ")) {
         return NextResponse.json({}, { status: 400 });
     }
-    const accessToken = auth.substring("Bearer ".length);
-    const client = new Client(accessToken);
-    const findRes = await client.users.findMyUser({
-        "user.fields": ["id", "username"],
+    const params = new URLSearchParams({
+        "user.fields": "id,username",
     });
-    return NextResponse.json(findRes.data, {
-        status: findRes.errors ? 500 : 200,
+    const meRes = await fetch("https://api.twitter.com/2/users/me?" + params, {
+        headers: {
+            Authorization: auth,
+        },
     });
+    return NextResponse.json(await meRes.json(), { status: meRes.status });
 }
