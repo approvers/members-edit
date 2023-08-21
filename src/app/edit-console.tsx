@@ -100,19 +100,17 @@ const EditableList = ({
         const redirectUri = new URL("/twitter-id", window.location.href);
         const randomChallenge = generate(128);
         const challengeData = new TextEncoder().encode(randomChallenge);
-        const challengeSha = await crypto.subtle.digest(
-            "SHA-256",
-            challengeData,
-        );
-        const challengeShaBase64 =
-            Buffer.from(challengeSha).toString("base64url");
+        const hashBuffer = await crypto.subtle.digest("SHA-256", challengeData);
+        const challengeHex = Array.from(new Uint8Array(hashBuffer))
+            .map((b) => b.toString(16).padStart(2, "0"))
+            .join("");
         const params = new URLSearchParams({
             response_type: "code",
             client_id: TWITTER_CLIENT_ID,
             redirect_uri: redirectUri.toString(),
             scope: "tweet.read users.read",
             state: randomState,
-            code_challenge: challengeShaBase64,
+            code_challenge: challengeHex,
             code_challenge_method: "S256",
         });
         const twitterOAuthLink = new URL(
