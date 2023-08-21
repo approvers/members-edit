@@ -56,26 +56,11 @@ const useDiscordOAuth = (): [OAuthProgress, () => void] => {
             setProgress(["GOT_TOKEN", response.access_token]);
         };
         window.addEventListener("message", handleMessage);
-
         const cleanup = () => {
-            clearInterval(disconnectionWatchdog);
-            setProgress([
-                "GOT_ERROR",
-                new Error("popup was closed forcefully"),
-            ]);
             removeState();
             window.removeEventListener("message", handleMessage);
             popupRef.current = null;
         };
-
-        const disconnectionWatchdog = setInterval(() => {
-            const popupOpen = !popupRef.current?.window?.closed ?? false;
-            if (popupOpen) {
-                return;
-            }
-            cleanup();
-        }, 1000);
-
         return cleanup;
     }, [popupRef]);
 
@@ -127,7 +112,15 @@ const useDiscordOAuth = (): [OAuthProgress, () => void] => {
             "/oauth2/authorize?" + params,
             "https://discord.com",
         );
-        popupRef.current = openPopupInCenter(url, "discord-oauth2");
+        const popup = openPopupInCenter(url, "discord-oauth2");
+        popupRef.current = popup;
+        popup?.addEventListener("close", () => {
+            setProgress((progress) =>
+                progress[0] === "LOADING"
+                    ? ["GOT_ERROR", new Error("popup was closed forcefully")]
+                    : progress,
+            );
+        });
     }
 
     return [progress, handleLogin];
