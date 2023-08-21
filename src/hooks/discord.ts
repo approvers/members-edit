@@ -53,6 +53,7 @@ export const useDiscordOAuth = (): [OAuthProgress, () => void] => {
                 expiresIn: response.expires_in,
             });
             setProgress(["GOT_TOKEN", response.access_token]);
+            popupRef.current?.close();
         };
         window.addEventListener("message", handleMessage);
         const cleanup = () => {

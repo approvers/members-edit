@@ -17,7 +17,12 @@ export const useGitHubOAuth = (
                 return;
             }
 
-            const { code } = data;
+            const { code, error } = data;
+            if (type === "ERROR") {
+                console.error(error);
+                popupRef.current?.close();
+                return;
+            }
             if (typeof code !== "string") {
                 console.dir(data);
                 throw new Error("invalid data");
@@ -47,6 +52,7 @@ export const useGitHubOAuth = (
             }
             const me = await meRes.json();
             onFoundUser(me);
+            popupRef.current?.close();
         }
         window.addEventListener("message", handleMessage);
         return () => {

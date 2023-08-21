@@ -14,7 +14,6 @@ export const GitHubCallbackClient = (): JSX.Element => {
             type: "OK",
             code,
         });
-        window.close();
     }, []);
 
     return <h1>遷移中…</h1>;

@@ -30,7 +30,6 @@ export const RedirectClient = (): JSX.Element => {
             type: "OK",
             code,
         });
-        window.close();
     }, []);
 
     return <h1>画面遷移中…</h1>;
