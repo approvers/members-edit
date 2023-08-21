@@ -13,9 +13,11 @@ export async function POST(request: Request): Promise<NextResponse> {
         redirect_uri: new URL("/twitter-id", request.url).toString(),
         code_verifier: challenge,
     });
+    const auth = `${process.env.TWITTER_TWITTER_API_KEY}:${process.env.TWITTER_API_KEY_SECRET}`;
     const tokenRes = await fetch("https://api.twitter.com/2/oauth2/token", {
         method: "POST",
         headers: {
+            Authorization: `Basic ${btoa(auth)}`,
             "Content-Type": "application/x-www-form-urlencoded",
         },
         body,
