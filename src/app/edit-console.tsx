@@ -99,23 +99,12 @@ const EditableList = ({
         };
 
         window.addEventListener("message", handleMessage);
-
-        const cleanup = () => {
-            clearInterval(connectionWatchdog);
+        return () => {
             removeState();
             window.removeEventListener("message", handleMessage);
             abort.abort();
             popupRef.current = null;
         };
-
-        const connectionWatchdog = setInterval(async () => {
-            const popupOpen = !popupRef.current?.window?.closed ?? false;
-            if (popupOpen) {
-                return;
-            }
-            cleanup();
-        }, 1000);
-        return cleanup;
     }, [challenge]);
 
     async function handleAddTwitterAccount() {
