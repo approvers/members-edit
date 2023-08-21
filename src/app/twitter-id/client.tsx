@@ -32,5 +32,5 @@ export const RedirectClient = (): JSX.Element => {
         });
     }, []);
 
-    return <h1>画面遷移中…</h1>;
+    return <h1>処理が完了しました. この画面は閉じてもらって構いません.</h1>;
 };
