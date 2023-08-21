@@ -53,27 +53,14 @@ const EditableList = ({
                 console.dir(message.data);
                 throw new Error("invalid data");
             }
-            const body = new URLSearchParams({
-                code,
-                grant_type: "authorization_code",
-                client_id: TWITTER_CLIENT_ID,
-                redirect_uri: new URL(
-                    "/twitter-id",
-                    window.location.href,
-                ).toString(),
-                code_verifier: challenge,
-            });
-            const tokenRes = await fetch(
-                "https://api.twitter.com/2/oauth2/token",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    body,
-                    signal: abort.signal,
+            const tokenRes = await fetch("/twitter-token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-            );
+                body: JSON.stringify({ code, challenge }),
+                signal: abort.signal,
+            });
             if (!tokenRes.ok) {
                 console.error(await tokenRes.text());
                 return;
