@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { Client } from "twitter-api-sdk";
 
+export const runtime = "edge";
+
 export async function GET(request: Request): Promise<NextResponse> {
     const auth = request.headers.get("Authorization");
     if (!auth || !auth.startsWith("Bearer ")) {

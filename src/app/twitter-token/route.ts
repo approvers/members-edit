@@ -1,6 +1,8 @@
 import { TWITTER_CLIENT_ID } from "@/store/consts";
 import { NextResponse } from "next/server";
 
+export const runtime = "edge";
+
 export async function POST(request: Request): Promise<NextResponse> {
     const twitterSecret = process.env.TWITTER_CLIENT_SECRET;
     if (!twitterSecret) {
