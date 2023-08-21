@@ -21,6 +21,14 @@ export interface State {
 export const nextState = (state: State, action: Action): State => {
     switch (action.type) {
         case "ADD_LINK":
+            if (
+                state.links.some(
+                    ({ type, id }) =>
+                        action.link.type === type && action.link.id === id,
+                )
+            ) {
+                return state;
+            }
             return { ...state, links: [...state.links, action.link] };
         case "REMOVE_LINK":
             return {

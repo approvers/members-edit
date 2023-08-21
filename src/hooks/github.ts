@@ -10,14 +10,19 @@ export const useGitHubOAuth = (
     const popupRef = useRef<Window | null>(null);
 
     useEffect(() => {
-        const abort = new AbortController();
-        async function handleMessage({ origin, data }: MessageEvent) {
+        const rx = new BroadcastChannel("github-oauth-code-channel");
+        rx.addEventListener("message", async ({ origin, data }) => {
             const { type } = data;
             if (typeof type !== "string" || origin !== window.location.origin) {
                 return;
             }
 
-            const { code } = data;
+            const { code, error } = data;
+            if (type === "ERROR") {
+                console.error(error);
+                popupRef.current?.close();
+                return;
+            }
             if (typeof code !== "string") {
                 console.dir(data);
                 throw new Error("invalid data");
@@ -28,7 +33,6 @@ export const useGitHubOAuth = (
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ code }),
-                signal: abort.signal,
             });
             if (!tokenRes.ok) {
                 console.error(await tokenRes.text());
@@ -39,7 +43,6 @@ export const useGitHubOAuth = (
                 headers: {
                     Authorization: `Bearer ${access_token}`,
                 },
-                signal: abort.signal,
             });
             if (!meRes.ok) {
                 console.error(await meRes.text());
@@ -47,13 +50,9 @@ export const useGitHubOAuth = (
             }
             const me = await meRes.json();
             onFoundUser(me);
-        }
-        window.addEventListener("message", handleMessage);
-        return () => {
-            window.removeEventListener("message", handleMessage);
-            abort.abort();
-        };
-    }, [popupRef, onFoundUser]);
+            popupRef.current?.close();
+        });
+    }, [onFoundUser]);
 
     function handleAddGitHubAccount() {
         const params = new URLSearchParams({

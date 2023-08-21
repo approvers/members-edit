@@ -21,11 +21,17 @@ export const useTwitterOAuth = (
 
         const rx = new BroadcastChannel("twitter-oauth-code-channel");
         rx.addEventListener("message", async (message) => {
-            if (message.origin !== window.location.origin) {
+            const { type } = message.data;
+            if (typeof type !== "string" || origin !== window.location.origin) {
                 return;
             }
 
-            const { code } = message.data;
+            const { code, error } = message.data;
+            if (type === "ERROR") {
+                console.error(error);
+                popupRef.current?.close();
+                return;
+            }
             if (typeof code !== "string") {
                 console.dir(message.data);
                 throw new Error("invalid data");
@@ -60,6 +66,7 @@ export const useTwitterOAuth = (
                 return;
             }
             onFoundUser(data);
+            popupRef.current?.close();
         });
 
         return () => {
@@ -67,7 +74,7 @@ export const useTwitterOAuth = (
             abort.abort();
             popupRef.current = null;
         };
-    }, [onFoundUser, challenge, popupRef]);
+    }, [onFoundUser, challenge]);
 
     async function handleAddTwitterAccount() {
         const randomState = generate(40);

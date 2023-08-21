@@ -11,29 +11,25 @@ export const RedirectClient = (): JSX.Element => {
         const error = paramsMap.get("error");
         const code = paramsMap.get("code");
 
-        if (!window.opener) {
-            console.error("not opened from popup");
-            return;
-        }
+        const tx = new BroadcastChannel("discord-oauth-code-channel");
         if (error) {
-            window.opener.postMessage({
+            tx.postMessage({
                 type: "ERROR",
                 error: decodeURI(error),
             });
             return;
         }
         if (state !== getState()) {
-            window.opener.postMessage({
+            tx.postMessage({
                 type: "ERROR",
                 error: "state mismatch",
             });
             return;
         }
-        window.opener.postMessage({
+        tx.postMessage({
             type: "OK",
             code,
         });
-        window.close();
     }, []);
 
     return <h1>画面遷移中…</h1>;
