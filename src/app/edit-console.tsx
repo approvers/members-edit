@@ -79,7 +79,7 @@ const EditableList = ({
             }
             const { id, username } = await meRes.json();
 
-            if (abort.signal.aborted) {
+            if (abort.signal.aborted || !id || !username) {
                 return;
             }
             dispatch({
