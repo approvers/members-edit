@@ -20,48 +20,48 @@ export const useDiscordOAuth = (): [OAuthProgress, () => void] => {
     const [progress, setProgress] = useState<OAuthProgress>(["LOADING"]);
 
     useEffect(() => {
-        const handleMessage = async ({ data, origin }: MessageEvent) => {
-            const { type } = data;
-            if (typeof type !== "string" || origin !== window.location.origin) {
-                return;
-            }
-            if (type === "ERROR") {
-                setProgress(["GOT_ERROR", data.error]);
-                return;
-            }
+        const rx = new BroadcastChannel("discord-oauth-code-channel");
+        rx.addEventListener(
+            "message",
+            async ({ data, origin }: MessageEvent) => {
+                const { type } = data;
+                if (
+                    typeof type !== "string" ||
+                    origin !== window.location.origin
+                ) {
+                    return;
+                }
+                if (type === "ERROR") {
+                    setProgress(["GOT_ERROR", data.error]);
+                    return;
+                }
 
-            const { code } = data;
-            if (typeof code !== "string") {
-                console.error("invalid message");
-                console.dir(data);
-                return;
-            }
-            const tokenRes = await fetch("/token", {
-                method: "POST",
-                body: JSON.stringify({ code }),
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            if (!tokenRes.ok) {
-                console.error(await tokenRes.text());
-                return;
-            }
-            const response = await tokenRes.json();
-            setRefresher({
-                refreshToken: response.refresh_token,
-                expiresIn: response.expires_in,
-            });
-            setProgress(["GOT_TOKEN", response.access_token]);
-            popupRef.current?.close();
-        };
-        window.addEventListener("message", handleMessage);
-        const cleanup = () => {
-            removeState();
-            window.removeEventListener("message", handleMessage);
-            popupRef.current = null;
-        };
-        return cleanup;
+                const { code } = data;
+                if (typeof code !== "string") {
+                    console.error("invalid message");
+                    console.dir(data);
+                    return;
+                }
+                const tokenRes = await fetch("/token", {
+                    method: "POST",
+                    body: JSON.stringify({ code }),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!tokenRes.ok) {
+                    console.error(await tokenRes.text());
+                    return;
+                }
+                const response = await tokenRes.json();
+                setRefresher({
+                    refreshToken: response.refresh_token,
+                    expiresIn: response.expires_in,
+                });
+                setProgress(["GOT_TOKEN", response.access_token]);
+                popupRef.current?.close();
+            },
+        );
     }, []);
 
     useEffect(() => {
