@@ -12,7 +12,7 @@ export type OAuthProgress =
     | [state: "GOT_TOKEN", token: string]
     | [state: "GOT_ERROR", error: Error];
 
-export const IndexClient = (): JSX.Element => {
+const useDiscordOAuth = (): [OAuthProgress, () => void] => {
     const popupRef = useRef<Window | null>(null);
     const [refresher, setRefresher] = useState<{
         refreshToken: string;
@@ -76,7 +76,7 @@ export const IndexClient = (): JSX.Element => {
         }, 1000);
 
         return cleanup;
-    }, []);
+    }, [popupRef]);
 
     useEffect(() => {
         if (refresher === null) {
@@ -128,6 +128,12 @@ export const IndexClient = (): JSX.Element => {
         );
         popupRef.current = openPopupInCenter(url, "discord-oauth2");
     }
+
+    return [progress, handleLogin];
+};
+
+export const IndexClient = (): JSX.Element => {
+    const [progress, handleLogin] = useDiscordOAuth();
 
     const loginButton = (
         <button
