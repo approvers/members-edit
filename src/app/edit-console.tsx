@@ -98,12 +98,12 @@ const EditableList = ({
             });
         };
 
-        popupRef.current?.addEventListener("message", handleMessage);
+        window.addEventListener("message", handleMessage);
 
         const cleanup = () => {
             clearInterval(connectionWatchdog);
             removeState();
-            popupRef.current?.removeEventListener("message", handleMessage);
+            window.removeEventListener("message", handleMessage);
             abort.abort();
         };
 
