@@ -8,6 +8,13 @@ import { generate } from "randomstring";
 import { openPopupInCenter } from "@/portal/popup";
 import { removeState, saveState } from "@/store/state";
 import { generators } from "openid-client";
+import { FaGithub, FaTwitter } from "react-icons/fa/";
+
+const AccountIcon = ({ type }: { type: "github" | "twitter" }): JSX.Element =>
+    ({
+        github: <FaGithub />,
+        twitter: <FaTwitter />,
+    })[type];
 
 const AccountList = ({
     list,
@@ -19,9 +26,9 @@ const AccountList = ({
     ) : (
         <ol>
             {list.map(({ type, id, name }) => (
-                <li key={`${type}-${id}`}>
-                    <span>{type}</span>
-                    <span>{name}</span>
+                <li key={`${type}-${id}`} className="flex items-center gap-4">
+                    <AccountIcon type={type} />
+                    <span className="text-xl">{name}</span>
                 </li>
             ))}
         </ol>
