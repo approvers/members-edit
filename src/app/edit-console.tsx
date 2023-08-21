@@ -7,7 +7,6 @@ import { TWITTER_CLIENT_ID } from "@/store/consts";
 import { generate } from "randomstring";
 import { openPopupInCenter } from "@/portal/popup";
 import { removeState, saveState } from "@/store/state";
-import { Client } from "twitter-api-sdk";
 import { generators } from "openid-client";
 
 const AccountList = ({
@@ -68,15 +67,17 @@ const EditableList = ({
             }
             const { access_token } = await tokenRes.json();
 
-            const client = new Client(access_token);
-            const findRes = await client.users.findMyUser({
-                "user.fields": ["id", "username"],
+            const meRes = await fetch("/twitter-me", {
+                headers: {
+                    Authorization: `Bearer ${access_token}`,
+                },
+                signal: abort.signal,
             });
-            if (!findRes.data) {
-                console.error(findRes.errors);
+            if (!meRes.ok) {
+                console.error(await meRes.text());
                 return;
             }
-            const { id, username } = findRes.data;
+            const { id, username } = await meRes.json();
 
             if (abort.signal.aborted) {
                 return;
