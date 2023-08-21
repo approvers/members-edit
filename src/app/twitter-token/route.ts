@@ -17,7 +17,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     const tokenRes = await fetch("https://api.twitter.com/2/oauth2/token", {
         method: "POST",
         headers: {
-            Authorization: `Basic ${btoa(auth)}`,
+            Authorization: `Basic ${Buffer.from(auth).toString("base64")}`,
             "Content-Type": "application/x-www-form-urlencoded",
         },
         body,
