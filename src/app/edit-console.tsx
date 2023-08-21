@@ -5,8 +5,6 @@ import { useReducer } from "react";
 import { nextState } from "./reducer";
 import { FaGithub, FaTwitter } from "react-icons/fa/";
 import { useTwitterOAuth } from "@/hooks/twitter";
-import { openPopupInCenter } from "@/portal/popup";
-import { GITHUB_CLIENT_ID } from "@/store/consts";
 import { useGitHubOAuth } from "@/hooks/github";
 
 const AccountIcon = ({ type }: { type: "github" | "twitter" }): JSX.Element =>
