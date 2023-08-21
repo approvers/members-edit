@@ -8,6 +8,7 @@ import { generate } from "randomstring";
 import { openPopupInCenter } from "@/portal/popup";
 import { removeState, saveState } from "@/store/state";
 import { Client } from "twitter-api-sdk";
+import { generators } from "openid-client";
 
 const AccountList = ({
     list,
@@ -98,19 +99,15 @@ const EditableList = ({
         saveState(randomState);
 
         const redirectUri = new URL("/twitter-id", window.location.href);
-        const randomChallenge = generate(128);
-        const challengeData = new TextEncoder().encode(randomChallenge);
-        const hashBuffer = await crypto.subtle.digest("SHA-256", challengeData);
-        const challengeHex = Array.from(new Uint8Array(hashBuffer))
-            .map((b) => b.toString(16).padStart(2, "0"))
-            .join("");
+        const challengeVerifier = generators.codeVerifier();
+        const challengeBase64 = generators.codeChallenge(challengeVerifier);
         const params = new URLSearchParams({
             response_type: "code",
             client_id: TWITTER_CLIENT_ID,
             redirect_uri: redirectUri.toString(),
             scope: "tweet.read users.read",
             state: randomState,
-            code_challenge: challengeHex,
+            code_challenge: challengeBase64,
             code_challenge_method: "S256",
         });
         const twitterOAuthLink = new URL(
@@ -121,7 +118,7 @@ const EditableList = ({
             twitterOAuthLink,
             "twitter-oauth2",
         );
-        setChallenge(randomChallenge);
+        setChallenge(challengeVerifier);
     }
 
     return (
