@@ -5,6 +5,9 @@ import { useReducer } from "react";
 import { nextState } from "./reducer";
 import { FaGithub, FaTwitter } from "react-icons/fa/";
 import { useTwitterOAuth } from "@/hooks/twitter";
+import { openPopupInCenter } from "@/portal/popup";
+import { GITHUB_CLIENT_ID } from "@/store/consts";
+import { useGitHubOAuth } from "@/hooks/github";
 
 const AccountIcon = ({ type }: { type: "github" | "twitter" }): JSX.Element =>
     ({
@@ -42,6 +45,12 @@ const EditableList = ({
             link: { type: "twitter", id, name: username },
         });
     });
+    const handleAddGitHubAccount = useGitHubOAuth(({ id, login }) => {
+        dispatch({
+            type: "ADD_LINK",
+            link: { type: "github", id: id.toString(), name: login },
+        });
+    });
 
     return (
         <>
@@ -52,6 +61,12 @@ const EditableList = ({
                     onClick={handleAddTwitterAccount}
                 >
                     Twitter アカウントを追加
+                </button>
+                <button
+                    className="bg-slate-800 text-slate-100 p-4 rounded-2xl"
+                    onClick={handleAddGitHubAccount}
+                >
+                    GitHub アカウントを追加
                 </button>
                 <button className="bg-slate-700 text-slate-100 p-4 rounded-2xl">
                     保存
