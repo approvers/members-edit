@@ -3,7 +3,8 @@
 import { AssociationLink, useAssociations } from "@/hooks/associations";
 import { useReducer, useState } from "react";
 import { nextState } from "./reducer";
-import { FaGithub, FaTwitter } from "react-icons/fa/";
+import { FaGithub, FaTwitter } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 import { useTwitterOAuth } from "@/hooks/twitter";
 import { useGitHubOAuth } from "@/hooks/github";
 
@@ -15,17 +16,26 @@ const AccountIcon = ({ type }: { type: "github" | "twitter" }): JSX.Element =>
 
 const AccountList = ({
     list,
+    onRemove,
 }: {
     list: readonly AssociationLink[];
+    onRemove: (index: number) => void;
 }): JSX.Element =>
     list.length === 0 ? (
         <p>関連付けられたアカウントはありません</p>
     ) : (
         <ol>
-            {list.map(({ type, id, name }) => (
+            {list.map(({ type, id, name }, index) => (
                 <li key={`${type}-${id}`} className="flex items-center gap-4">
                     <AccountIcon type={type} />
                     <span className="text-xl">{name}</span>
+                    <button
+                        onClick={() => {
+                            onRemove(index);
+                        }}
+                    >
+                        <MdDelete className="text-red-400" />
+                    </button>
                 </li>
             ))}
         </ol>
@@ -60,9 +70,16 @@ const EditableList = ({
         });
     }
 
+    function handleRemove(index: number) {
+        dispatch({
+            type: "REMOVE_LINK",
+            index,
+        });
+    }
+
     return (
         <>
-            <AccountList list={state.links} />
+            <AccountList list={state.links} onRemove={handleRemove} />
             <div className="flex gap-8">
                 <button
                     className="bg-cyan-400 text-slate-100 p-4 rounded-2xl"
