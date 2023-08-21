@@ -33,8 +33,10 @@ const AccountList = ({
 
 const EditableList = ({
     defaultList,
+    onSave,
 }: {
     defaultList: readonly AssociationLink[];
+    onSave: (newList: readonly AssociationLink[]) => void;
 }) => {
     const [state, dispatch] = useReducer(nextState, { links: defaultList });
     const handleAddTwitterAccount = useTwitterOAuth(({ id, username }) => {
@@ -49,6 +51,10 @@ const EditableList = ({
             link: { type: "github", id: id.toString(), name: login },
         });
     });
+
+    function handleSave() {
+        onSave(state.links);
+    }
 
     return (
         <>
@@ -66,7 +72,10 @@ const EditableList = ({
                 >
                     GitHub アカウントを追加
                 </button>
-                <button className="bg-slate-700 text-slate-100 p-4 rounded-2xl">
+                <button
+                    className="bg-slate-700 text-slate-100 p-4 rounded-2xl"
+                    onClick={handleSave}
+                >
                     保存
                 </button>
             </div>
@@ -82,5 +91,31 @@ export const EditConsole = ({ token }: { token: string }): JSX.Element => {
     }
     const list = associations[1];
 
-    return <EditableList defaultList={list} />;
+    async function handleSave(newList: readonly AssociationLink[]) {
+        const discordMeRes = await fetch(
+            "https://discord.com/api/v10/users/@me",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        );
+        const { id: discordId } = await discordMeRes.json();
+
+        const res = await fetch(
+            `https://members.approvers.dev/members/${discordId}/associations`,
+            {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(newList),
+            },
+        );
+        if (!res.ok) {
+            console.error(await res.json());
+        }
+    }
+
+    return <EditableList defaultList={list} onSave={handleSave} />;
 };
