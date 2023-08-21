@@ -67,7 +67,7 @@ export const useTwitterOAuth = (
             abort.abort();
             popupRef.current = null;
         };
-    }, [onFoundUser, challenge, popupRef]);
+    }, [onFoundUser, challenge]);
 
     async function handleAddTwitterAccount() {
         const randomState = generate(40);

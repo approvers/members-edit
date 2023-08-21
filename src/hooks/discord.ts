@@ -61,7 +61,7 @@ export const useDiscordOAuth = (): [OAuthProgress, () => void] => {
             popupRef.current = null;
         };
         return cleanup;
-    }, [popupRef]);
+    }, []);
 
     useEffect(() => {
         if (refresher === null) {

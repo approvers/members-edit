@@ -53,7 +53,7 @@ export const useGitHubOAuth = (
             window.removeEventListener("message", handleMessage);
             abort.abort();
         };
-    }, [popupRef, onFoundUser]);
+    }, [onFoundUser]);
 
     function handleAddGitHubAccount() {
         const params = new URLSearchParams({
