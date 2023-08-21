@@ -77,7 +77,9 @@ const EditableList = ({
                 console.error(await meRes.text());
                 return;
             }
-            const { id, username } = await meRes.json();
+            const {
+                data: { id, username },
+            } = await meRes.json();
 
             if (abort.signal.aborted || !id || !username) {
                 return;
