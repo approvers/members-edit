@@ -113,7 +113,7 @@ export const EditConsole = ({ token }: { token: string }): JSX.Element => {
             },
         );
         if (!res.ok) {
-            console.error(await res.json());
+            console.error(await res.text());
         }
     }
 
