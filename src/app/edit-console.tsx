@@ -1,8 +1,8 @@
 "use client";
 
 import { AssociationLink, useAssociations } from "@/hooks/associations";
-import { useEffect, useReducer, useRef, useState } from "react";
-import { nextState } from "./reducer";
+import { Dispatch, useEffect, useReducer, useRef, useState } from "react";
+import { Action, nextState } from "./reducer";
 import { TWITTER_CLIENT_ID } from "@/store/consts";
 import { generate } from "randomstring";
 import { openPopupInCenter } from "@/portal/popup";
@@ -10,38 +10,9 @@ import { removeState, saveState } from "@/store/state";
 import { generators } from "openid-client";
 import { FaGithub, FaTwitter } from "react-icons/fa/";
 
-const AccountIcon = ({ type }: { type: "github" | "twitter" }): JSX.Element =>
-    ({
-        github: <FaGithub />,
-        twitter: <FaTwitter />,
-    })[type];
-
-const AccountList = ({
-    list,
-}: {
-    list: readonly AssociationLink[];
-}): JSX.Element =>
-    list.length === 0 ? (
-        <p>関連付けられたアカウントはありません</p>
-    ) : (
-        <ol>
-            {list.map(({ type, id, name }) => (
-                <li key={`${type}-${id}`} className="flex items-center gap-4">
-                    <AccountIcon type={type} />
-                    <span className="text-xl">{name}</span>
-                </li>
-            ))}
-        </ol>
-    );
-
-const EditableList = ({
-    defaultList,
-}: {
-    defaultList: readonly AssociationLink[];
-}) => {
+const useTwitterOAuth = (dispatch: Dispatch<Action>) => {
     const popupRef = useRef<Window | null>(null);
     const [challenge, setChallenge] = useState<string | null>(null);
-    const [state, dispatch] = useReducer(nextState, { links: defaultList });
 
     useEffect(() => {
         if (!challenge) {
@@ -102,7 +73,7 @@ const EditableList = ({
             abort.abort();
             popupRef.current = null;
         };
-    }, [challenge, popupRef]);
+    }, [dispatch, challenge, popupRef]);
 
     async function handleAddTwitterAccount() {
         const randomState = generate(40);
@@ -130,6 +101,41 @@ const EditableList = ({
         );
         setChallenge(challengeVerifier);
     }
+
+    return handleAddTwitterAccount;
+};
+
+const AccountIcon = ({ type }: { type: "github" | "twitter" }): JSX.Element =>
+    ({
+        github: <FaGithub />,
+        twitter: <FaTwitter />,
+    })[type];
+
+const AccountList = ({
+    list,
+}: {
+    list: readonly AssociationLink[];
+}): JSX.Element =>
+    list.length === 0 ? (
+        <p>関連付けられたアカウントはありません</p>
+    ) : (
+        <ol>
+            {list.map(({ type, id, name }) => (
+                <li key={`${type}-${id}`} className="flex items-center gap-4">
+                    <AccountIcon type={type} />
+                    <span className="text-xl">{name}</span>
+                </li>
+            ))}
+        </ol>
+    );
+
+const EditableList = ({
+    defaultList,
+}: {
+    defaultList: readonly AssociationLink[];
+}) => {
+    const [state, dispatch] = useReducer(nextState, { links: defaultList });
+    const handleAddTwitterAccount = useTwitterOAuth(dispatch);
 
     return (
         <>
