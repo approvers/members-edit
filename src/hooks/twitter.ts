@@ -1,14 +1,15 @@
 "use client";
 
-import { Dispatch, useEffect, useRef, useState } from "react";
-import { Action } from "../app/reducer";
+import { useEffect, useRef, useState } from "react";
 import { TWITTER_CLIENT_ID } from "@/store/consts";
 import { generate } from "randomstring";
 import { openPopupInCenter } from "@/portal/popup";
 import { removeState, saveState } from "@/store/state";
 import { generators } from "openid-client";
 
-export const useTwitterOAuth = (dispatch: Dispatch<Action>) => {
+export const useTwitterOAuth = (
+    onFoundUser: (data: { id: string; username: string }) => void,
+) => {
     const popupRef = useRef<Window | null>(null);
     const [challenge, setChallenge] = useState<string | null>(null);
 
@@ -53,17 +54,12 @@ export const useTwitterOAuth = (dispatch: Dispatch<Action>) => {
                 console.error(await meRes.text());
                 return;
             }
-            const {
-                data: { id, username },
-            } = await meRes.json();
+            const { data } = await meRes.json();
 
-            if (abort.signal.aborted || !id || !username) {
+            if (abort.signal.aborted || !data) {
                 return;
             }
-            dispatch({
-                type: "ADD_LINK",
-                link: { type: "twitter", id, name: username },
-            });
+            onFoundUser(data);
         });
 
         return () => {
@@ -71,7 +67,7 @@ export const useTwitterOAuth = (dispatch: Dispatch<Action>) => {
             abort.abort();
             popupRef.current = null;
         };
-    }, [dispatch, challenge, popupRef]);
+    }, [onFoundUser, challenge, popupRef]);
 
     async function handleAddTwitterAccount() {
         const randomState = generate(40);

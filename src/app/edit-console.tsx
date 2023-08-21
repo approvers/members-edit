@@ -36,7 +36,12 @@ const EditableList = ({
     defaultList: readonly AssociationLink[];
 }) => {
     const [state, dispatch] = useReducer(nextState, { links: defaultList });
-    const handleAddTwitterAccount = useTwitterOAuth(dispatch);
+    const handleAddTwitterAccount = useTwitterOAuth(({ id, username }) => {
+        dispatch({
+            type: "ADD_LINK",
+            link: { type: "twitter", id, name: username },
+        });
+    });
 
     return (
         <>
