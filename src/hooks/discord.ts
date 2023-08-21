@@ -69,6 +69,9 @@ export const useDiscordOAuth = (): [OAuthProgress, () => void] => {
             return;
         }
         const abort = new AbortController();
+        console.info(
+            `token will be refreshed in ${refresher.expiresIn} seconds`,
+        );
         const refreshTimer = setTimeout(async () => {
             const refreshRes = await fetch("/refresh", {
                 method: "POST",
