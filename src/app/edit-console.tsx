@@ -37,10 +37,9 @@ const EditableList = ({
     const [state, dispatch] = useReducer(nextState, { links: defaultList });
 
     useEffect(() => {
-        if (!popupRef.current || !challenge) {
+        if (!challenge) {
             return;
         }
-        const popupWindow = popupRef.current;
         const abort = new AbortController();
 
         const handleMessage = async (message: MessageEvent) => {
@@ -99,17 +98,17 @@ const EditableList = ({
             });
         };
 
-        popupWindow.addEventListener("message", handleMessage);
+        popupRef.current?.addEventListener("message", handleMessage);
 
         const cleanup = () => {
             clearInterval(connectionWatchdog);
             removeState();
-            popupWindow.removeEventListener("message", handleMessage);
+            popupRef.current?.removeEventListener("message", handleMessage);
             abort.abort();
         };
 
         const connectionWatchdog = setInterval(async () => {
-            const popupOpen = !popupWindow.window?.closed ?? false;
+            const popupOpen = !popupRef.current?.window?.closed ?? false;
             if (popupOpen) {
                 return;
             }
