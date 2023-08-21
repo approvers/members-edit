@@ -42,7 +42,8 @@ const EditableList = ({
         }
         const abort = new AbortController();
 
-        const handleMessage = async (message: MessageEvent) => {
+        const rx = new BroadcastChannel("twitter-oauth-code-channel");
+        rx.addEventListener("message", async (message) => {
             if (message.origin !== window.location.origin) {
                 return;
             }
@@ -96,12 +97,10 @@ const EditableList = ({
                 type: "ADD_LINK",
                 link: { type: "twitter", id, name: username },
             });
-        };
+        });
 
-        window.addEventListener("message", handleMessage);
         return () => {
             removeState();
-            window.removeEventListener("message", handleMessage);
             abort.abort();
             popupRef.current = null;
         };
