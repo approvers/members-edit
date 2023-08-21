@@ -110,6 +110,7 @@ export const useDiscordOAuth = (): [OAuthProgress, () => void] => {
             response_type: "code",
             scope: "identify guilds.members.read",
             state,
+            prompt: "none",
         });
         const url = new URL(
             "/oauth2/authorize?" + params,
