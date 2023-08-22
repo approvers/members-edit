@@ -4,7 +4,7 @@ import { AssociationLink, useAssociations } from "@/hooks/associations";
 import { useReducer, useState } from "react";
 import { nextState } from "./reducer";
 import { FaGithub, FaTwitter } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdOpenInNew } from "react-icons/md";
 import { useTwitterOAuth } from "@/hooks/twitter";
 import { useGitHubOAuth } from "@/hooks/github";
 
@@ -28,7 +28,16 @@ const AccountList = ({
             {list.map(({ type, id, name }, index) => (
                 <li key={`${type}-${id}`} className="flex items-center gap-4">
                     <AccountIcon type={type} />
-                    <span className="text-xl">{name}</span>
+                    <a
+                        href={`https://${type}.com/${name}`}
+                        target="_blank"
+                        referrerPolicy="no-referrer"
+                        rel="noopener noreferrer"
+                        className="flex items-end"
+                    >
+                        <span className="text-xl underline">{name}</span>
+                        <MdOpenInNew />
+                    </a>
                     <button
                         onClick={() => {
                             onRemove(index);
