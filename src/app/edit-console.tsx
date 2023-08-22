@@ -28,7 +28,14 @@ const AccountList = ({
             {list.map(({ type, id, name }, index) => (
                 <li key={`${type}-${id}`} className="flex items-center gap-4">
                     <AccountIcon type={type} />
-                    <span className="text-xl">{name}</span>
+                    <a
+                        href={`https://${type}.com/${name}`}
+                        target="_blank"
+                        referrerPolicy="no-referrer"
+                        rel="noopener noreferrer"
+                    >
+                        <span className="text-xl">{name}</span>
+                    </a>
                     <button
                         onClick={() => {
                             onRemove(index);
