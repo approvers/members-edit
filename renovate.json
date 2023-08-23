@@ -19,9 +19,7 @@
     "vulnerabilityAlerts": {
         "enabled": true,
         "automerge": true,
-        "assignees": [
-            "MikuroXina"
-        ]
+        "assignees": ["MikuroXina"]
     },
     "extends": [":timezone(Asia/Tokyo)"],
     "schedule": ["on the first day of the week"]
