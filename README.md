@@ -1,34 +1,19 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# members-edit
 
-## Getting Started
+[members-assoc](https://github.com/approvers/members-assoc) で関連付けた情報を簡単に編集できるウェブ UI を提供します.
 
-First, run the development server:
+## 使い方
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+まず, あなたの Discord アカウントが限界開発鯖 (Approvers) に参加している必要があります. さもなくば編集データの保存が動作しないか, ログイン段階で失敗します.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Approvers のメンバーの方は, [https://edit.members.approvers.dev](https://edit.members.approvers.dev) にアクセスしてログインしましょう. OAuth によるログインのポップアップが表示されます.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+その後, GitHub や X (旧 Twitter) のアカウント情報を追加/削除できます. 追加はリスト下部のボタンから, 削除はリスト内のアカウント項目の横にあるボタンから行なえます. 編集が完了したら, 保存ボタンをクリックして保存しましょう.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+保存できた情報は, `https://members.approvers.dev/{あなたの Discord アカウントの ID}/associations` で取得できます. 心配であればご確認ください.
 
-## Learn More
+ログインした際のアクセストークンの関係で, 長時間操作しないでいると保存処理に失敗することがあります. その場合はリロードして再度ログインし直してください.
 
-To learn more about Next.js, take a look at the following resources:
+## 技術情報
 
--   [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
--   [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+これは Next.js (App Router) を用いて構築されており, Cloudflare Pages 上にデプロイされています.
