@@ -1,6 +1,8 @@
 import { DISCORD_CLIENT_ID } from "@/store/consts";
 import { NextResponse } from "next/server";
 
+export const runtime = "edge";
+
 export async function POST(request: Request): Promise<NextResponse> {
     const clientSecret = process.env.DISCORD_CLIENT_SECRET;
 
