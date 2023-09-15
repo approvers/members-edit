@@ -1,8 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
     title: "Approvers メンバー情報編集",
 };
