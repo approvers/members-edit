@@ -18,7 +18,7 @@
         "serve": "^14.2.0"
     },
     "devDependencies": {
-        "@types/node": "20.8.7",
+        "@types/node": "20.8.8",
         "@types/randomstring": "^1.1.8",
         "@types/react": "18.2.29",
         "@types/react-dom": "18.2.14",
