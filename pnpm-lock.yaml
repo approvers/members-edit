@@ -45,7 +45,7 @@ devDependencies:
     version: 14.1.0(eslint@8.56.0)(typescript@5.3.3)
   eslint-plugin-next-on-pages:
     specifier: ^1.5.1
-    version: 1.5.1(eslint@8.56.0)
+    version: 1.9.0(eslint@8.56.0)
   eslint-plugin-simple-import-sort:
     specifier: ^12.0.0
     version: 12.0.0(eslint@8.56.0)
@@ -315,14 +315,14 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@types/estree-jsx@1.0.0:
-    resolution: {integrity: sha512-3qvGd0z8F2ENTGr/GG1yViqfiKmRfrXVx5sJyHGFu3z7m5g5utCQtGp/g29JnjflhtQJBv1WDQukHiT58xPcYQ==}
+  /@types/estree-jsx@1.0.5:
+    resolution: {integrity: sha512-52CcUVNFyfb1A2ALocQw/Dd1BQFNmSdkuC3BkZ6iqhdMfQz7JWOFRuJFloOzjk+6WijU56m9oKXFAXc7o3Towg==}
     dependencies:
-      '@types/estree': 1.0.1
+      '@types/estree': 1.0.5
     dev: true
 
-  /@types/estree@1.0.1:
-    resolution: {integrity: sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==}
+  /@types/estree@1.0.5:
+    resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
     dev: true
 
   /@types/json5@0.0.29:
@@ -798,8 +798,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /comment-parser@1.4.0:
-    resolution: {integrity: sha512-QLyTNiZ2KDOibvFPlZ6ZngVsZ/0gYnE6uTXi5aoDg8ed3AkJAz4sEje3Y8a29hQ1s6A99MZXe47fLAXQ1rTqaw==}
+  /comment-parser@1.4.1:
+    resolution: {integrity: sha512-buhp5kePrmda3vhc5B9t7pUQXAb2Tnd0qgpkIhPhkHXxJpiPJ11H0ZEU0oBpJ2QztSbzG/ZxMj/CHsYJqRHmyg==}
     engines: {node: '>= 12.0.0'}
     dev: true
 
@@ -1207,13 +1207,13 @@ packages:
       semver: 6.3.1
     dev: true
 
-  /eslint-plugin-next-on-pages@1.5.1(eslint@8.56.0):
-    resolution: {integrity: sha512-0zvuix2d0rK/8+7j8Vf51hyHAubPCG9LysV82Hke4IyFkq7IdeLNl8QWseO8eXrhXKFBaOe9J7HnyJ53uxBzEQ==}
+  /eslint-plugin-next-on-pages@1.9.0(eslint@8.56.0):
+    resolution: {integrity: sha512-Iq1kTKlHRWKkvg4PV7vFMs/wLjmyyuTsOAa7O8JdmrRPbev3rlfoKaDgDGFmkxvgHRnxEFlVJ1BTZzHJwPe/Ew==}
     peerDependencies:
       eslint: ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
-      '@types/estree-jsx': 1.0.0
-      comment-parser: 1.4.0
+      '@types/estree-jsx': 1.0.5
+      comment-parser: 1.4.1
       eslint: 8.56.0
     dev: true
 
