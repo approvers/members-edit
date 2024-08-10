@@ -47,7 +47,7 @@ importers:
         version: 14.2.5(eslint@8.57.0)(typescript@5.5.4)
       eslint-plugin-next-on-pages:
         specifier: ^1.5.1
-        version: 1.13.0(eslint@8.57.0)
+        version: 1.13.2(eslint@8.57.0)
       eslint-plugin-simple-import-sort:
         specifier: ^12.0.0
         version: 12.1.1(eslint@8.57.0)
@@ -678,8 +678,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
 
-  eslint-plugin-next-on-pages@1.13.0:
-    resolution: {integrity: sha512-Ul/Qgr8yKbNyGhM+m0U4iuX2hvJJy2JxeVDiW1GPk6TwO2tPUZ/0ePc7OhUsalwsf2G7JEFUD7gD3gf+Hf7RBg==}
+  eslint-plugin-next-on-pages@1.13.2:
+    resolution: {integrity: sha512-9rbzlUrI3gZcu6n4FandFAS5SZc2SxjKKsaDa3aq4ekke9hDlRZ+NNpTEbKet+2NuDp1Fm0dXqJTFPQLcuyPOA==}
     peerDependencies:
       eslint: ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
 
@@ -2453,7 +2453,7 @@ snapshots:
       object.fromentries: 2.0.6
       semver: 6.3.1
 
-  eslint-plugin-next-on-pages@1.13.0(eslint@8.57.0):
+  eslint-plugin-next-on-pages@1.13.2(eslint@8.57.0):
     dependencies:
       '@types/estree-jsx': 1.0.5
       comment-parser: 1.4.1
