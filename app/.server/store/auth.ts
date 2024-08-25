@@ -9,6 +9,7 @@ import {
     GITHUB_CLIENT_ID,
     TWITTER_CLIENT_ID,
 } from "./consts";
+import { GitHubStrategy } from "remix-auth-github";
 
 const cookieSecret = process.env.COOKIE_SECRET;
 if (!cookieSecret) {
@@ -91,27 +92,14 @@ export const githubAssocAuthenticator = new Authenticator<GitHubAssociation>(
 );
 
 githubAssocAuthenticator.use(
-    new OAuth2Strategy(
+    new GitHubStrategy(
         {
             clientId: GITHUB_CLIENT_ID,
             clientSecret: githubClientSecret,
-            authorizationEndpoint: "https://github.com/login/oauth/authorize",
-            tokenEndpoint: "https://github.com/login/oauth/access_token",
             redirectURI: new URL("/dashboard/redirect-github", urlBase),
-            codeChallengeMethod: "S256",
-            authenticateWith: "request_body",
         },
-        async ({ tokens }) => {
-            const res = await fetch("https://api.github.com/user", {
-                headers: {
-                    Authorization: `Bearer ${tokens.access_token}`,
-                },
-            });
-            const { id, login } = await res.json<{
-                id: number;
-                login: string;
-            }>();
-            return { type: "github", id: id.toString(), name: login };
+        async ({ profile }) => {
+            return { id: profile.id, name: profile.displayName };
         },
     ),
     "github-oauth",
