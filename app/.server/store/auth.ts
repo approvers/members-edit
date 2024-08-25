@@ -1,4 +1,7 @@
-import { createCookieSessionStorage } from "@remix-run/cloudflare";
+import {
+    createCookieSessionStorage,
+    createMemorySessionStorage,
+} from "@remix-run/cloudflare";
 import { Authenticator } from "remix-auth";
 import { OAuth2Strategy } from "remix-auth-oauth2";
 import {
@@ -24,17 +27,6 @@ if (!twitterClientSecret) {
     throw new Error("TWITTER_CLIENT_SECRET was not set");
 }
 
-const sessionStorage = createCookieSessionStorage({
-    cookie: {
-        name: "edit.members.approvers.dev",
-        sameSite: "lax",
-        path: "/",
-        httpOnly: true,
-        secrets: [cookieSecret],
-        secure: process.env.NODE_ENV === "production",
-    },
-});
-
 const urlBase =
     process.env.NODE_ENV === "production"
         ? "https://edit.members.approvers.dev"
@@ -44,7 +36,18 @@ export type Member = {
     discordToken: string;
     discordId: string;
 };
-export const authenticator = new Authenticator<Member>(sessionStorage);
+export const authenticator = new Authenticator<Member>(
+    createCookieSessionStorage({
+        cookie: {
+            name: "edit.members.approvers.dev",
+            sameSite: "lax",
+            path: "/",
+            httpOnly: true,
+            secrets: [cookieSecret],
+            secure: process.env.NODE_ENV === "production",
+        },
+    }),
+);
 
 authenticator.use(
     new OAuth2Strategy(
@@ -84,7 +87,7 @@ export type GitHubAssociation = {
     name: string;
 };
 export const githubAssocAuthenticator = new Authenticator<GitHubAssociation>(
-    sessionStorage,
+    createMemorySessionStorage(),
 );
 
 githubAssocAuthenticator.use(
@@ -119,7 +122,7 @@ export type TwitterAssociation = {
     name: string;
 };
 export const twitterAssocAuthenticator = new Authenticator<TwitterAssociation>(
-    sessionStorage,
+    createMemorySessionStorage(),
 );
 twitterAssocAuthenticator.use(
     new OAuth2Strategy(
