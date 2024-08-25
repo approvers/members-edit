@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "remix vite:dev",
         "build": "remix vite:build",
-        "start": "remix-serve ./build/server/index.js",
+        "start": "wrangler pages dev ./build/client",
+        "deploy": "wrangler pages deploy ./build/client",
         "lint": "eslint --ignore-path .gitignore .",
         "check": "prettier --check \"**/*.{js,ts,tsx,md,json}\" && tsc --noEmit",
         "format": "prettier --write \"**/*.{js,ts,tsx,md,json}\""
@@ -14,7 +15,6 @@
     "dependencies": {
         "@remix-run/cloudflare": "^2.11.2",
         "@remix-run/react": "^2.11.2",
-        "@remix-run/serve": "^2.11.2",
         "@vitejs/plugin-react": "^4.3.1",
         "isbot": "4",
         "openid-client": "^5.6.5",
