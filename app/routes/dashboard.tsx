@@ -61,6 +61,14 @@ export default function Dashboard() {
     return (
         <main className="flex min-h-screen flex-col items-center justify-center gap-4">
             <AccountList list={associations} />
+            <div className="fixed top-6 left-6">
+                <a
+                    href="/logout"
+                    className="bg-slate-700 text-slate-100 p-4 rounded-2xl"
+                >
+                    ログアウト
+                </a>
+            </div>
             <div className="flex gap-8">
                 <Form action="/dashboard/add-twitter" method="post">
                     <button className="bg-cyan-400 text-slate-100 p-4 rounded-2xl">
