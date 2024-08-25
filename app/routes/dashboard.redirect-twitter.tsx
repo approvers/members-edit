@@ -1,7 +1,6 @@
 import { redirect, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import {
     authenticator,
-    githubAssocAuthenticator,
     twitterAssocAuthenticator,
 } from "../.server/store/auth";
 import { getAssociationLinks } from "../.server/store/association";
@@ -21,7 +20,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         },
     );
     const { id: addingId, name: addingName } =
-        await githubAssocAuthenticator.authenticate("twitter-oauth", request, {
+        await twitterAssocAuthenticator.authenticate("twitter-oauth", request, {
             failureRedirect: "/dashboard",
         });
     if (!addingId || !addingName) {
