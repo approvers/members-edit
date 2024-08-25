@@ -20,6 +20,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
         await githubAssocAuthenticator.isAuthenticated(request, {
             failureRedirect: "/dashboard",
         });
+    if (!addingId || !addingName) {
+        console.log("bad parameters");
+        return redirect("/dashboard");
+    }
+
     const associations = await getAssociationLinks(discordId);
     const newList = associations.filter(
         ({ type, id }) => !(type === "twitter" && id === addingId),
