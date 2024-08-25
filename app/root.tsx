@@ -1,12 +1,6 @@
-import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/cloudflare";
-import stylesheet from "./tailwind.css?url";
-import favicon from "./favicon.ico?url";
+import "./tailwind.css";
 
-export const links: LinksFunction = () => [
-    { rel: "stylesheet", href: stylesheet },
-    { rel: "icon", href: favicon },
-];
+import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
 
 export default function App() {
     return (
