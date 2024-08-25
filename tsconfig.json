@@ -13,14 +13,6 @@
         "isolatedModules": true,
         "jsx": "react-jsx",
         "incremental": true,
-        "plugins": [
-            {
-                "name": "next"
-            }
-        ],
-        "paths": {
-            "@/*": ["./src/*"]
-        },
         "types": ["@remix-run/node", "vite/client"],
         "verbatimModuleSyntax": true
     },
