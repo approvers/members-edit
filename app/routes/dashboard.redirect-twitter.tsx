@@ -1,5 +1,9 @@
 import { redirect, type LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { authenticator, githubAssocAuthenticator } from "../.server/store/auth";
+import {
+    authenticator,
+    githubAssocAuthenticator,
+    twitterAssocAuthenticator,
+} from "../.server/store/auth";
 import { getAssociationLinks } from "../.server/store/association";
 
 export default function Redirect(): JSX.Element {
@@ -43,5 +47,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     if (!res.ok) {
         console.log("adding twitter account: " + (await res.text()));
     }
-    return redirect("/dashboard");
+    return twitterAssocAuthenticator.logout(request, {
+        redirectTo: "/dashboard",
+    });
 }

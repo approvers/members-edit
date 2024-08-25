@@ -9,6 +9,7 @@ export default function Redirect(): JSX.Element {
         </main>
     );
 }
+
 export async function loader({ request }: LoaderFunctionArgs) {
     const { discordToken, discordId } = await authenticator.isAuthenticated(
         request,
@@ -30,7 +31,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
         ({ type, id }) => !(type === "github" && id === addingId),
     );
     newList.push({ type: "github", id: addingId, name: addingName });
-    console.log({ newList });
     const res = await fetch(
         `https://members.approvers.dev/members/${discordId}/associations`,
         {
@@ -45,5 +45,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     if (!res.ok) {
         console.log("adding github account: " + (await res.text()));
     }
-    return redirect("/dashboard");
+    return githubAssocAuthenticator.logout(request, {
+        redirectTo: "/dashboard",
+    });
 }
