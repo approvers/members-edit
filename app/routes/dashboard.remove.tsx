@@ -1,6 +1,7 @@
-import { redirect, type ActionFunctionArgs } from "@remix-run/cloudflare";
-import { authenticator } from "../.server/store/auth";
+import { type ActionFunctionArgs, redirect } from "@remix-run/cloudflare";
+
 import { getAssociationLinks } from "../.server/store/association";
+import { authenticator } from "../.server/store/auth";
 
 export async function action({ request }: ActionFunctionArgs) {
     const { discordToken, discordId } = await authenticator.isAuthenticated(

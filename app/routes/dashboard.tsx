@@ -1,12 +1,13 @@
+import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
+import { Form, redirect, useLoaderData } from "@remix-run/react";
 import { FaGithub, FaTwitter } from "react-icons/fa";
 import { MdDelete, MdOpenInNew } from "react-icons/md";
-import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { authenticator } from "../.server/store/auth";
+
 import {
-    getAssociationLinks,
     type AssociationLinks,
+    getAssociationLinks,
 } from "../.server/store/association";
-import { Form, redirect, useLoaderData } from "@remix-run/react";
+import { authenticator } from "../.server/store/auth";
 
 export async function loader({ request }: LoaderFunctionArgs) {
     const { discordId } = await authenticator.isAuthenticated(request, {
@@ -23,7 +24,7 @@ const AccountIcon = ({ type }: { type: "github" | "twitter" }): JSX.Element =>
     ({
         github: <FaGithub />,
         twitter: <FaTwitter />,
-    })[type];
+    }[type]);
 
 const AccountList = ({ list }: { list: AssociationLinks }): JSX.Element =>
     list.length === 0 ? (

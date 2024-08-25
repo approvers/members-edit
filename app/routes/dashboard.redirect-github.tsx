@@ -1,6 +1,7 @@
-import { redirect, type LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { authenticator, githubAssocAuthenticator } from "../.server/store/auth";
+import { type LoaderFunctionArgs, redirect } from "@remix-run/cloudflare";
+
 import { getAssociationLinks } from "../.server/store/association";
+import { authenticator, githubAssocAuthenticator } from "../.server/store/auth";
 
 export default function Redirect(): JSX.Element {
     return (

@@ -1,6 +1,7 @@
 import type { ActionFunctionArgs } from "@remix-run/cloudflare";
-import { authenticator } from "../.server/store/auth.js";
 import { Form } from "@remix-run/react";
+
+import { authenticator } from "../.server/store/auth.js";
 
 export default function Index() {
     return (

@@ -3,13 +3,14 @@ import {
     createMemorySessionStorage,
 } from "@remix-run/cloudflare";
 import { Authenticator } from "remix-auth";
+import { GitHubStrategy } from "remix-auth-github";
 import { OAuth2Strategy } from "remix-auth-oauth2";
+
 import {
     DISCORD_CLIENT_ID,
     GITHUB_CLIENT_ID,
     TWITTER_CLIENT_ID,
 } from "./consts";
-import { GitHubStrategy } from "remix-auth-github";
 
 const cookieSecret = process.env.COOKIE_SECRET;
 if (!cookieSecret) {

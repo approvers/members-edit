@@ -1,4 +1,5 @@
-import { redirect, type ActionFunctionArgs } from "@remix-run/cloudflare";
+import { type ActionFunctionArgs, redirect } from "@remix-run/cloudflare";
+
 import {
     authenticator,
     twitterAssocAuthenticator,
