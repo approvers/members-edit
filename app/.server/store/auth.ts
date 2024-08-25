@@ -136,11 +136,17 @@ twitterAssocAuthenticator.use(
                     },
                 },
             );
-            const { id, username: name } = await meRes.json<{
-                id: string;
-                username: string;
+            if (!meRes.ok) {
+                console.log(await meRes.text());
+                throw new Error("failed getting twitter account");
+            }
+            const json = await meRes.json<{
+                data: { id: string; username: string };
             }>();
-            return { type: "twitter", id, name };
+            const {
+                data: { id, username: name },
+            } = json;
+            return { id, name };
         },
     ),
     "twitter-oauth",
