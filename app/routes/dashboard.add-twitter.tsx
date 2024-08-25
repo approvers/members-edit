@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs } from "@remix-run/cloudflare";
+import { redirect, type ActionFunctionArgs } from "@remix-run/cloudflare";
 import {
     authenticator,
     twitterAssocAuthenticator,
@@ -11,4 +11,8 @@ export async function action({ request }: ActionFunctionArgs) {
     return twitterAssocAuthenticator.authenticate("twitter-oauth", request, {
         failureRedirect: "/dashboard",
     });
+}
+
+export async function loader() {
+    return redirect("/dashboard");
 }

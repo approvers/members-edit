@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs } from "@remix-run/cloudflare";
+import { redirect, type ActionFunctionArgs } from "@remix-run/cloudflare";
 import { authenticator, githubAssocAuthenticator } from "../.server/store/auth";
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -8,4 +8,8 @@ export async function action({ request }: ActionFunctionArgs) {
     return githubAssocAuthenticator.authenticate("github-oauth", request, {
         failureRedirect: "/dashboard",
     });
+}
+
+export async function loader() {
+    return redirect("/dashboard");
 }
