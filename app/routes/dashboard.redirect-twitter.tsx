@@ -21,7 +21,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         },
     );
     const { id: addingId, name: addingName } =
-        await githubAssocAuthenticator.isAuthenticated(request, {
+        await githubAssocAuthenticator.authenticate("twitter-oauth", request, {
             failureRedirect: "/dashboard",
         });
     if (!addingId || !addingName) {
