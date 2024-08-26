@@ -1,7 +1,10 @@
 import { type LoaderFunctionArgs, redirect } from "@remix-run/cloudflare";
 
 import { getAssociationLinks } from "../.server/store/association";
-import { authenticator, githubAssocAuthenticator } from "../.server/store/auth";
+import {
+    getAuthenticator,
+    getGithubAssocAuthenticator,
+} from "../.server/store/auth";
 
 export default function Redirect(): JSX.Element {
     return (
@@ -11,15 +14,18 @@ export default function Redirect(): JSX.Element {
     );
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-    const { discordToken, discordId } = await authenticator.isAuthenticated(
-        request,
-        {
-            failureRedirect: "/",
-        },
-    );
+export async function loader({ request, context }: LoaderFunctionArgs) {
+    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, GITHUB_CLIENT_SECRET } =
+        context.cloudflare.env;
+    const { discordToken, discordId } = await getAuthenticator(
+        COOKIE_SECRET,
+        DISCORD_CLIENT_SECRET,
+    ).isAuthenticated(request, {
+        failureRedirect: "/",
+    });
+    const githubAssocAuth = getGithubAssocAuthenticator(GITHUB_CLIENT_SECRET);
     const { id: addingId, name: addingName } =
-        await githubAssocAuthenticator.authenticate("github-oauth", request, {
+        await githubAssocAuth.authenticate("github-oauth", request, {
             failureRedirect: "/dashboard",
         });
     if (!addingId || !addingName) {
@@ -46,7 +52,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     if (!res.ok) {
         console.log("adding github account: " + (await res.text()));
     }
-    return githubAssocAuthenticator.logout(request, {
+    return githubAssocAuth.logout(request, {
         redirectTo: "/dashboard",
     });
 }

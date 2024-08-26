@@ -1,7 +1,11 @@
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
 
-import { authenticator } from "../.server/store/auth";
+import { getAuthenticator } from "../.server/store/auth";
 
-export async function loader({ request }: LoaderFunctionArgs) {
-    await authenticator.logout(request, { redirectTo: "/" });
+export async function loader({ request, context }: LoaderFunctionArgs) {
+    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET } = context.cloudflare.env;
+    await getAuthenticator(COOKIE_SECRET, DISCORD_CLIENT_SECRET).logout(
+        request,
+        { redirectTo: "/" },
+    );
 }

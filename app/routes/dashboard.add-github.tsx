@@ -1,14 +1,26 @@
 import { type ActionFunctionArgs, redirect } from "@remix-run/cloudflare";
 
-import { authenticator, githubAssocAuthenticator } from "../.server/store/auth";
+import {
+    getAuthenticator,
+    getGithubAssocAuthenticator,
+} from "../.server/store/auth";
 
-export async function action({ request }: ActionFunctionArgs) {
-    await authenticator.isAuthenticated(request, {
+export async function action({ request, context }: ActionFunctionArgs) {
+    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, GITHUB_CLIENT_SECRET } =
+        context.cloudflare.env;
+    await getAuthenticator(
+        COOKIE_SECRET,
+        DISCORD_CLIENT_SECRET,
+    ).isAuthenticated(request, {
         failureRedirect: "/",
     });
-    return githubAssocAuthenticator.authenticate("github-oauth", request, {
-        failureRedirect: "/dashboard",
-    });
+    return getGithubAssocAuthenticator(GITHUB_CLIENT_SECRET).authenticate(
+        "github-oauth",
+        request,
+        {
+            failureRedirect: "/dashboard",
+        },
+    );
 }
 
 export async function loader() {

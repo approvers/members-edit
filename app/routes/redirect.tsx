@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
 
-import { authenticator } from "../.server/store/auth";
+import { getAuthenticator } from "../.server/store/auth";
 
 export default function Redirect(): JSX.Element {
     return (
@@ -10,9 +10,14 @@ export default function Redirect(): JSX.Element {
     );
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-    return authenticator.authenticate("discord-oauth", request, {
-        successRedirect: "/dashboard",
-        failureRedirect: "/",
-    });
+export async function loader({ request, context }: LoaderFunctionArgs) {
+    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET } = context.cloudflare.env;
+    return getAuthenticator(COOKIE_SECRET, DISCORD_CLIENT_SECRET).authenticate(
+        "discord-oauth",
+        request,
+        {
+            successRedirect: "/dashboard",
+            failureRedirect: "/",
+        },
+    );
 }

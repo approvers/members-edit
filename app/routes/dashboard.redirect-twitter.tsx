@@ -2,8 +2,8 @@ import { type LoaderFunctionArgs, redirect } from "@remix-run/cloudflare";
 
 import { getAssociationLinks } from "../.server/store/association";
 import {
-    authenticator,
-    twitterAssocAuthenticator,
+    getAuthenticator,
+    getTwitterAssocAuthenticator,
 } from "../.server/store/auth";
 
 export default function Redirect(): JSX.Element {
@@ -13,15 +13,20 @@ export default function Redirect(): JSX.Element {
         </main>
     );
 }
-export async function loader({ request }: LoaderFunctionArgs) {
-    const { discordToken, discordId } = await authenticator.isAuthenticated(
-        request,
-        {
-            failureRedirect: "/",
-        },
+export async function loader({ request, context }: LoaderFunctionArgs) {
+    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, TWITTER_CLIENT_SECRET } =
+        context.cloudflare.env;
+    const { discordToken, discordId } = await getAuthenticator(
+        COOKIE_SECRET,
+        DISCORD_CLIENT_SECRET,
+    ).isAuthenticated(request, {
+        failureRedirect: "/",
+    });
+    const twitterAssocAuth = getTwitterAssocAuthenticator(
+        TWITTER_CLIENT_SECRET,
     );
     const { id: addingId, name: addingName } =
-        await twitterAssocAuthenticator.authenticate("twitter-oauth", request, {
+        await twitterAssocAuth.authenticate("twitter-oauth", request, {
             failureRedirect: "/dashboard",
         });
     if (!addingId || !addingName) {
@@ -47,7 +52,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     if (!res.ok) {
         console.log("adding twitter account: " + (await res.text()));
     }
-    return twitterAssocAuthenticator.logout(request, {
+    return twitterAssocAuth.logout(request, {
         redirectTo: "/dashboard",
     });
 }

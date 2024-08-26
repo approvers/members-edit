@@ -1,15 +1,16 @@
 import { type ActionFunctionArgs, redirect } from "@remix-run/cloudflare";
 
 import { getAssociationLinks } from "../.server/store/association";
-import { authenticator } from "../.server/store/auth";
+import { getAuthenticator } from "../.server/store/auth";
 
-export async function action({ request }: ActionFunctionArgs) {
-    const { discordToken, discordId } = await authenticator.isAuthenticated(
-        request,
-        {
-            failureRedirect: "/",
-        },
-    );
+export async function action({ request, context }: ActionFunctionArgs) {
+    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET } = context.cloudflare.env;
+    const { discordToken, discordId } = await getAuthenticator(
+        COOKIE_SECRET,
+        DISCORD_CLIENT_SECRET,
+    ).isAuthenticated(request, {
+        failureRedirect: "/",
+    });
     if (request.method !== "POST") {
         return redirect("/dashboard");
     }

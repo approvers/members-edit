@@ -7,10 +7,14 @@ import {
     type AssociationLinks,
     getAssociationLinks,
 } from "../.server/store/association";
-import { authenticator } from "../.server/store/auth";
+import { getAuthenticator } from "../.server/store/auth";
 
-export async function loader({ request }: LoaderFunctionArgs) {
-    const { discordId } = await authenticator.isAuthenticated(request, {
+export async function loader({ request, context }: LoaderFunctionArgs) {
+    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET } = context.cloudflare.env;
+    const { discordId } = await getAuthenticator(
+        COOKIE_SECRET,
+        DISCORD_CLIENT_SECRET,
+    ).isAuthenticated(request, {
         failureRedirect: "/",
     });
     const associations = await getAssociationLinks(discordId);

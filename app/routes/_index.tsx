@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs } from "@remix-run/cloudflare";
 import { Form } from "@remix-run/react";
 
-import { authenticator } from "../.server/store/auth.js";
+import { getAuthenticator } from "../.server/store/auth.js";
 
 export default function Index() {
     return (
@@ -16,9 +16,14 @@ export default function Index() {
     );
 }
 
-export async function action({ request }: ActionFunctionArgs) {
-    return authenticator.authenticate("discord-oauth", request, {
-        successRedirect: "/dashboard",
-        failureRedirect: "/",
-    });
+export async function action({ request, context }: ActionFunctionArgs) {
+    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET } = context.cloudflare.env;
+    return getAuthenticator(COOKIE_SECRET, DISCORD_CLIENT_SECRET).authenticate(
+        "discord-oauth",
+        request,
+        {
+            successRedirect: "/dashboard",
+            failureRedirect: "/",
+        },
+    );
 }
