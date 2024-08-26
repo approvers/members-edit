@@ -1,4 +1,5 @@
 import pluginJs from "@eslint/js";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import reactJSXRuntime from "eslint-plugin-react/configs/jsx-runtime.js";
 import reactRecommended from "eslint-plugin-react/configs/recommended.js";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
@@ -44,4 +45,5 @@ export default [
             "simple-import-sort/exports": "error",
         },
     },
+    eslintPluginPrettierRecommended,
 ];
