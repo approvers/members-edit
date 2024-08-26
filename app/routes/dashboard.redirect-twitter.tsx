@@ -13,6 +13,7 @@ export default function Redirect(): JSX.Element {
         </main>
     );
 }
+
 export async function loader({ request, context }: LoaderFunctionArgs) {
     const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, TWITTER_CLIENT_SECRET } =
         context.cloudflare.env;

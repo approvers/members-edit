@@ -26,3 +26,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
 export async function loader() {
     return redirect("/dashboard");
 }
+
+export default function Redirect(): JSX.Element {
+    return (
+        <main>
+            <h1>画面遷移中…</h1>
+        </main>
+    );
+}

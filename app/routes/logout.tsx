@@ -9,3 +9,11 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
         { redirectTo: "/" },
     );
 }
+
+export default function Redirect(): JSX.Element {
+    return (
+        <main>
+            <h1>ログアウト中…</h1>
+        </main>
+    );
+}
