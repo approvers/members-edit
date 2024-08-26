@@ -15,16 +15,22 @@ export default function Redirect(): JSX.Element {
 }
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
-    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, TWITTER_CLIENT_SECRET } =
-        context.cloudflare.env;
+    const {
+        COOKIE_SECRET,
+        DISCORD_CLIENT_SECRET,
+        TWITTER_CLIENT_SECRET,
+        NODE_ENV,
+    } = context.cloudflare.env;
     const { discordToken, discordId } = await getAuthenticator(
         COOKIE_SECRET,
         DISCORD_CLIENT_SECRET,
+        NODE_ENV,
     ).isAuthenticated(request, {
         failureRedirect: "/",
     });
     const twitterAssocAuth = getTwitterAssocAuthenticator(
         TWITTER_CLIENT_SECRET,
+        NODE_ENV,
     );
     const { id: addingId, name: addingName } =
         await twitterAssocAuth.authenticate("twitter-oauth", request, {

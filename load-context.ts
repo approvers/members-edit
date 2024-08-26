@@ -7,6 +7,7 @@ import { type PlatformProxy } from "wrangler";
 // even if no `wrangler.toml` exists.
 
 type Env = {
+    NODE_ENV: string;
     COOKIE_SECRET: string;
     DISCORD_CLIENT_SECRET: string;
     TWITTER_CLIENT_SECRET: string;

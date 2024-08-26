@@ -6,21 +6,25 @@ import {
 } from "../.server/store/auth";
 
 export async function action({ request, context }: ActionFunctionArgs) {
-    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, TWITTER_CLIENT_SECRET } =
-        context.cloudflare.env;
+    const {
+        COOKIE_SECRET,
+        DISCORD_CLIENT_SECRET,
+        TWITTER_CLIENT_SECRET,
+        NODE_ENV,
+    } = context.cloudflare.env;
     await getAuthenticator(
         COOKIE_SECRET,
         DISCORD_CLIENT_SECRET,
+        NODE_ENV,
     ).isAuthenticated(request, {
         failureRedirect: "/",
     });
-    return getTwitterAssocAuthenticator(TWITTER_CLIENT_SECRET).authenticate(
-        "twitter-oauth",
-        request,
-        {
-            failureRedirect: "/dashboard",
-        },
-    );
+    return getTwitterAssocAuthenticator(
+        TWITTER_CLIENT_SECRET,
+        NODE_ENV,
+    ).authenticate("twitter-oauth", request, {
+        failureRedirect: "/dashboard",
+    });
 }
 
 export async function loader() {

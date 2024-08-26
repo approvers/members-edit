@@ -4,10 +4,12 @@ import { getAssociationLinks } from "../.server/store/association";
 import { getAuthenticator } from "../.server/store/auth";
 
 export async function action({ request, context }: ActionFunctionArgs) {
-    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET } = context.cloudflare.env;
+    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, NODE_ENV } =
+        context.cloudflare.env;
     const { discordToken, discordId } = await getAuthenticator(
         COOKIE_SECRET,
         DISCORD_CLIENT_SECRET,
+        NODE_ENV,
     ).isAuthenticated(request, {
         failureRedirect: "/",
     });

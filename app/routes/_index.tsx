@@ -17,13 +17,14 @@ export default function Index() {
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
-    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET } = context.cloudflare.env;
-    return getAuthenticator(COOKIE_SECRET, DISCORD_CLIENT_SECRET).authenticate(
-        "discord-oauth",
-        request,
-        {
-            successRedirect: "/dashboard",
-            failureRedirect: "/",
-        },
-    );
+    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, NODE_ENV } =
+        context.cloudflare.env;
+    return getAuthenticator(
+        COOKIE_SECRET,
+        DISCORD_CLIENT_SECRET,
+        NODE_ENV,
+    ).authenticate("discord-oauth", request, {
+        successRedirect: "/dashboard",
+        failureRedirect: "/",
+    });
 }
