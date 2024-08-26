@@ -28,7 +28,7 @@ const AccountIcon = ({ type }: { type: "github" | "twitter" }): JSX.Element =>
     ({
         github: <FaGithub />,
         twitter: <FaTwitter />,
-    }[type]);
+    })[type];
 
 const AccountList = ({ list }: { list: AssociationLinks }): JSX.Element =>
     list.length === 0 ? (
