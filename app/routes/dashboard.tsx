@@ -27,10 +27,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 }
 
 const AccountIcon = ({ type }: { type: "github" | "twitter" }): JSX.Element =>
-    ({
-        github: <FaGithub />,
-        twitter: <FaTwitter />,
-    }[type]);
+    type === "github" ? <FaGithub /> : <FaTwitter />;
 
 const AccountList = ({ list }: { list: AssociationLinks }): JSX.Element =>
     list.length === 0 ? (
