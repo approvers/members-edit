@@ -12,8 +12,8 @@ import {
     TWITTER_CLIENT_ID,
 } from "./consts";
 
-const urlBase =
-    process.env.NODE_ENV === "production"
+const urlBase = (mode: string) =>
+    mode === "production"
         ? "https://edit.members.approvers.dev"
         : "http://localhost:3000";
 
@@ -24,6 +24,7 @@ export type Member = {
 export const getAuthenticator = (
     cookieSecret: string,
     discordClientSecret: string,
+    mode: string,
 ) => {
     const authenticator = new Authenticator<Member>(
         createCookieSessionStorage({
@@ -44,7 +45,7 @@ export const getAuthenticator = (
                 clientSecret: discordClientSecret,
                 authorizationEndpoint: "https://discord.com/oauth2/authorize",
                 tokenEndpoint: "https://discord.com/api/v10/oauth2/token",
-                redirectURI: new URL("/redirect", urlBase),
+                redirectURI: new URL("/redirect", urlBase(mode)),
                 tokenRevocationEndpoint:
                     "https://discord.com/api/v10/oauth2/token/revoke",
                 codeChallengeMethod: "S256",
@@ -78,7 +79,10 @@ export type GitHubAssociation = {
     id: string;
     name: string;
 };
-export const getGithubAssocAuthenticator = (githubClientSecret: string) => {
+export const getGithubAssocAuthenticator = (
+    githubClientSecret: string,
+    mode: string,
+) => {
     const assocAuthenticator = new Authenticator<GitHubAssociation>(
         createMemorySessionStorage(),
     );
@@ -88,7 +92,10 @@ export const getGithubAssocAuthenticator = (githubClientSecret: string) => {
             {
                 clientId: GITHUB_CLIENT_ID,
                 clientSecret: githubClientSecret,
-                redirectURI: new URL("/dashboard/redirect-github", urlBase),
+                redirectURI: new URL(
+                    "/dashboard/redirect-github",
+                    urlBase(mode),
+                ),
             },
             async ({ profile }) => {
                 return { id: profile.id, name: profile.displayName };
@@ -103,7 +110,10 @@ export type TwitterAssociation = {
     id: string;
     name: string;
 };
-export const getTwitterAssocAuthenticator = (twitterClientSecret: string) => {
+export const getTwitterAssocAuthenticator = (
+    twitterClientSecret: string,
+    mode: string,
+) => {
     const assocAuthenticator = new Authenticator<TwitterAssociation>(
         createMemorySessionStorage(),
     );
@@ -114,7 +124,10 @@ export const getTwitterAssocAuthenticator = (twitterClientSecret: string) => {
                 clientSecret: twitterClientSecret,
                 authorizationEndpoint: "https://twitter.com/i/oauth2/authorize",
                 tokenEndpoint: "https://api.twitter.com/2/oauth2/token",
-                redirectURI: new URL("/dashboard/redirect-twitter", urlBase),
+                redirectURI: new URL(
+                    "/dashboard/redirect-twitter",
+                    urlBase(mode),
+                ),
                 scopes: ["tweet.read", "users.read"],
                 codeChallengeMethod: "S256",
                 authenticateWith: "http_basic_auth",

@@ -10,10 +10,12 @@ import {
 import { getAuthenticator } from "../.server/store/auth";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
-    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET } = context.cloudflare.env;
+    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, NODE_ENV } =
+        context.cloudflare.env;
     const { discordId } = await getAuthenticator(
         COOKIE_SECRET,
         DISCORD_CLIENT_SECRET,
+        NODE_ENV,
     ).isAuthenticated(request, {
         failureRedirect: "/",
     });
@@ -28,7 +30,7 @@ const AccountIcon = ({ type }: { type: "github" | "twitter" }): JSX.Element =>
     ({
         github: <FaGithub />,
         twitter: <FaTwitter />,
-    })[type];
+    }[type]);
 
 const AccountList = ({ list }: { list: AssociationLinks }): JSX.Element =>
     list.length === 0 ? (

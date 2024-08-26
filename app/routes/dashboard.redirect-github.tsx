@@ -15,15 +15,23 @@ export default function Redirect(): JSX.Element {
 }
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
-    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, GITHUB_CLIENT_SECRET } =
-        context.cloudflare.env;
+    const {
+        COOKIE_SECRET,
+        DISCORD_CLIENT_SECRET,
+        GITHUB_CLIENT_SECRET,
+        NODE_ENV,
+    } = context.cloudflare.env;
     const { discordToken, discordId } = await getAuthenticator(
         COOKIE_SECRET,
         DISCORD_CLIENT_SECRET,
+        NODE_ENV,
     ).isAuthenticated(request, {
         failureRedirect: "/",
     });
-    const githubAssocAuth = getGithubAssocAuthenticator(GITHUB_CLIENT_SECRET);
+    const githubAssocAuth = getGithubAssocAuthenticator(
+        GITHUB_CLIENT_SECRET,
+        NODE_ENV,
+    );
     const { id: addingId, name: addingName } =
         await githubAssocAuth.authenticate("github-oauth", request, {
             failureRedirect: "/dashboard",
