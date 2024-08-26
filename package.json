@@ -8,7 +8,7 @@
         "build": "remix vite:build",
         "start": "wrangler pages dev ./build/client",
         "deploy": "wrangler pages deploy ./build/client",
-        "lint": "eslint --ignore-path .gitignore .",
+        "lint": "eslint .",
         "check": "prettier --check \"**/*.{js,ts,tsx,md,json}\" && tsc --noEmit",
         "format": "prettier --write \"**/*.{js,ts,tsx,md,json}\""
     },
