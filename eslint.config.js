@@ -7,10 +7,8 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default [
-    {
-        files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
-        ignores: ["build", "node_modules"],
-    },
+    { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
+    { ignores: ["build/"] },
     { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
