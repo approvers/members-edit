@@ -1,4 +1,5 @@
 import { type LoaderFunctionArgs, redirect } from "@remix-run/cloudflare";
+import type { JSX } from "react";
 
 import { getAssociationLinks } from "../.server/store/association";
 import {
