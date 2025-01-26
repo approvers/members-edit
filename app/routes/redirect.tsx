@@ -1,4 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
+import type { JSX } from "react";
 
 import { getAuthenticator } from "../.server/store/auth";
 
