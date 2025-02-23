@@ -58,7 +58,11 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
             console.log(`adding twitter account: ${await res.text()}`);
         }
     } catch (err: unknown) {
-        console.error(err);
+        if (err instanceof Error) {
+            console.error(err);
+        } else {
+            throw err;
+        }
     }
     return redirect("/dashboard");
 }

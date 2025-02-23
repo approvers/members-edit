@@ -23,8 +23,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
             TWITTER_CLIENT_SECRET,
             NODE_ENV,
         ).authenticate("twitter-oauth", request);
-    } catch {
-        return redirect("/dashboard");
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            return redirect("/dashboard");
+        }
+        throw err;
     }
 }
 

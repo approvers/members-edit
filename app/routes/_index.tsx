@@ -31,7 +31,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
                 "Set-Cookie": await store.serialize(user),
             },
         });
-    } catch {
-        return redirect("/");
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            return redirect("/");
+        }
+        throw err;
     }
 }

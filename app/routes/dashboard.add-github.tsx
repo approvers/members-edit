@@ -22,8 +22,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
             GITHUB_CLIENT_SECRET,
             NODE_ENV,
         ).authenticate("github-oauth", request);
-    } catch {
-        return redirect("/dashboard");
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            return redirect("/dashboard");
+        }
+        throw err;
     }
 }
 
