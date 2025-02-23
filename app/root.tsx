@@ -1,4 +1,3 @@
-import React from "react";
 import "./tailwind.css";
 
 import { Links, Meta, Outlet, Scripts } from "react-router";

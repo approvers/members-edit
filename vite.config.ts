@@ -1,5 +1,5 @@
-import { cloudflareDevProxy } from "@react-router/dev/vite/cloudflare";
 import { reactRouter } from "@react-router/dev/vite";
+import { cloudflareDevProxy } from "@react-router/dev/vite/cloudflare";
 import tailwindCss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";

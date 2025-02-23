@@ -8,7 +8,7 @@ import tseslint from "typescript-eslint";
 
 export default [
     { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
-    { ignores: ["build/"] },
+    { ignores: ["build/", ".react-router"] },
     { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,

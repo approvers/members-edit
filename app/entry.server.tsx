@@ -1,18 +1,12 @@
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
-import {
-    ServerRouter,
-    type AppLoadContext,
-    type EntryContext,
-} from "react-router";
-import React from "react";
+import { type EntryContext, ServerRouter } from "react-router";
 
 export default async function handleRequest(
     request: Request,
     responseStatusCode: number,
     responseHeaders: Headers,
     routerContext: EntryContext,
-    _loadContext: AppLoadContext,
 ) {
     let resCode = responseStatusCode;
     let shellRendered = false;
