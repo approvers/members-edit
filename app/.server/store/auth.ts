@@ -40,9 +40,9 @@ export const getAuthenticator = (discordClientSecret: string, mode: string) => {
                         },
                     },
                 );
-                const { id: discordId } = await discordMeRes.json<{
+                const { id: discordId } = (await discordMeRes.json()) as {
                     id: string;
-                }>();
+                };
                 return {
                     discordToken: tokens.accessToken(),
                     discordId,
@@ -68,11 +68,11 @@ const fetchGitHubUser = async (
             "X-GitHub-Api-Version": "2022-11-28",
         },
     });
-    const { id, login, name } = await res.json<{
+    const { id, login, name } = (await res.json()) as {
         id: number;
         login: string;
         name: string | null;
-    }>();
+    };
     return {
         id: id.toString(),
         name: name ?? login,
@@ -139,9 +139,9 @@ export const getTwitterAssocAuthenticator = (
                     console.log(await meRes.text());
                     throw new Error("failed getting twitter account");
                 }
-                const json = await meRes.json<{
+                const json = (await meRes.json()) as {
                     data: { id: string; username: string };
-                }>();
+                };
                 const {
                     data: { id, username: name },
                 } = json;

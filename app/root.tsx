@@ -1,6 +1,6 @@
 import "./tailwind.css";
 
-import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts } from "react-router";
 
 export default function App() {
     return (
