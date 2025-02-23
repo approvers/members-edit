@@ -3,9 +3,10 @@ import type { JSX } from "react";
 
 import { getAssociationLinks } from "../.server/store/association";
 import {
-    getAuthenticator,
     getTwitterAssocAuthenticator,
+    type Member,
 } from "../.server/store/auth";
+import { sessionCookie } from "../.server/store/cookie";
 
 export default function Redirect(): JSX.Element {
     return (
@@ -16,51 +17,48 @@ export default function Redirect(): JSX.Element {
 }
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
-    const {
-        COOKIE_SECRET,
-        DISCORD_CLIENT_SECRET,
-        TWITTER_CLIENT_SECRET,
-        NODE_ENV,
-    } = context.cloudflare.env;
-    const { discordToken, discordId } = await getAuthenticator(
-        COOKIE_SECRET,
-        DISCORD_CLIENT_SECRET,
-        NODE_ENV,
-    ).isAuthenticated(request, {
-        failureRedirect: "/",
-    });
+    const { COOKIE_SECRET, TWITTER_CLIENT_SECRET, NODE_ENV } =
+        context.cloudflare.env;
+    const cookie = request.headers.get("cookie");
+    const user = (await sessionCookie(COOKIE_SECRET).parse(
+        cookie,
+    )) as Member | null;
+    if (!user) {
+        return redirect("/");
+    }
+    const { discordToken, discordId } = user;
     const twitterAssocAuth = getTwitterAssocAuthenticator(
         TWITTER_CLIENT_SECRET,
         NODE_ENV,
     );
-    const { id: addingId, name: addingName } =
-        await twitterAssocAuth.authenticate("twitter-oauth", request, {
-            failureRedirect: "/dashboard",
-        });
-    if (!addingId || !addingName) {
-        console.log("bad parameters");
-        return redirect("/dashboard");
-    }
+    try {
+        const { id: addingId, name: addingName } =
+            await twitterAssocAuth.authenticate("twitter-oauth", request);
+        if (!addingId || !addingName) {
+            console.log("bad parameters");
+            return redirect("/dashboard");
+        }
 
-    const associations = await getAssociationLinks(discordId);
-    const newList = associations.filter(
-        ({ type, id }) => !(type === "twitter" && id === addingId),
-    );
-    newList.push({ type: "twitter", id: addingId, name: addingName });
-    const res = await fetch(
-        `https://members.approvers.dev/members/${discordId}/associations`,
-        {
-            method: "PUT",
-            headers: {
-                Authorization: `Bearer ${discordToken}`,
+        const associations = await getAssociationLinks(discordId);
+        const newList = associations.filter(
+            ({ type, id }) => !(type === "twitter" && id === addingId),
+        );
+        newList.push({ type: "twitter", id: addingId, name: addingName });
+        const res = await fetch(
+            `https://members.approvers.dev/members/${discordId}/associations`,
+            {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${discordToken}`,
+                },
+                body: JSON.stringify(newList),
             },
-            body: JSON.stringify(newList),
-        },
-    );
-    if (!res.ok) {
-        console.log("adding twitter account: " + (await res.text()));
+        );
+        if (!res.ok) {
+            console.log(`adding twitter account: ${await res.text()}`);
+        }
+    } catch (err: unknown) {
+        console.error(err);
     }
-    return twitterAssocAuth.logout(request, {
-        redirectTo: "/dashboard",
-    });
+    return redirect("/dashboard");
 }

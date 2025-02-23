@@ -3,9 +3,10 @@ import type { JSX } from "react";
 
 import { getAssociationLinks } from "../.server/store/association";
 import {
-    getAuthenticator,
     getGithubAssocAuthenticator,
+    type Member,
 } from "../.server/store/auth";
+import { sessionCookie } from "../.server/store/cookie";
 
 export default function Redirect(): JSX.Element {
     return (
@@ -16,52 +17,49 @@ export default function Redirect(): JSX.Element {
 }
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
-    const {
-        COOKIE_SECRET,
-        DISCORD_CLIENT_SECRET,
-        GITHUB_CLIENT_SECRET,
-        NODE_ENV,
-    } = context.cloudflare.env;
-    const { discordToken, discordId } = await getAuthenticator(
-        COOKIE_SECRET,
-        DISCORD_CLIENT_SECRET,
-        NODE_ENV,
-    ).isAuthenticated(request, {
-        failureRedirect: "/",
-    });
+    const { COOKIE_SECRET, GITHUB_CLIENT_SECRET, NODE_ENV } =
+        context.cloudflare.env;
+    const cookie = request.headers.get("cookie");
+    const user = (await sessionCookie(COOKIE_SECRET).parse(
+        cookie,
+    )) as Member | null;
+    if (!user) {
+        return redirect("/");
+    }
+    const { discordToken, discordId } = user;
     const githubAssocAuth = getGithubAssocAuthenticator(
         GITHUB_CLIENT_SECRET,
         NODE_ENV,
     );
-    const { id: addingId, name: addingName } =
-        await githubAssocAuth.authenticate("github-oauth", request, {
-            failureRedirect: "/dashboard",
-        });
-    if (!addingId || !addingName) {
-        console.log("bad parameters");
-        return redirect("/dashboard");
-    }
+    try {
+        const { id: addingId, name: addingName } =
+            await githubAssocAuth.authenticate("github-oauth", request);
+        if (!addingId || !addingName) {
+            console.log("bad parameters");
+            return redirect("/dashboard");
+        }
 
-    const associations = await getAssociationLinks(discordId);
-    const newList = associations.filter(
-        ({ type, id }) => !(type === "github" && id === addingId),
-    );
-    newList.push({ type: "github", id: addingId, name: addingName });
-    const res = await fetch(
-        `https://members.approvers.dev/members/${discordId}/associations`,
-        {
-            method: "PUT",
-            headers: {
-                Authorization: `Bearer ${discordToken}`,
-                "Content-Type": "application/json",
+        const associations = await getAssociationLinks(discordId);
+        const newList = associations.filter(
+            ({ type, id }) => !(type === "github" && id === addingId),
+        );
+        newList.push({ type: "github", id: addingId, name: addingName });
+        const res = await fetch(
+            `https://members.approvers.dev/members/${discordId}/associations`,
+            {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${discordToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newList),
             },
-            body: JSON.stringify(newList),
-        },
-    );
-    if (!res.ok) {
-        console.log("adding github account: " + (await res.text()));
+        );
+        if (!res.ok) {
+            console.log(`adding github account: ${await res.text()}`);
+        }
+    } catch (err: unknown) {
+        console.error(err);
     }
-    return githubAssocAuth.logout(request, {
-        redirectTo: "/dashboard",
-    });
+    return redirect("/dashboard");
 }

@@ -1,7 +1,3 @@
-import {
-    createCookieSessionStorage,
-    createMemorySessionStorage,
-} from "@remix-run/cloudflare";
 import { Authenticator } from "remix-auth";
 import { GitHubStrategy } from "remix-auth-github";
 import { OAuth2Strategy } from "remix-auth-oauth2";
@@ -21,23 +17,8 @@ export type Member = {
     discordToken: string;
     discordId: string;
 };
-export const getAuthenticator = (
-    cookieSecret: string,
-    discordClientSecret: string,
-    mode: string,
-) => {
-    const authenticator = new Authenticator<Member>(
-        createCookieSessionStorage({
-            cookie: {
-                name: "edit.members.approvers.dev",
-                sameSite: "lax",
-                path: "/",
-                httpOnly: true,
-                secrets: [cookieSecret],
-                secure: process.env.NODE_ENV === "production",
-            },
-        }),
-    );
+export const getAuthenticator = (discordClientSecret: string, mode: string) => {
+    const authenticator = new Authenticator<Member>();
     authenticator.use(
         new OAuth2Strategy(
             {
@@ -48,16 +29,14 @@ export const getAuthenticator = (
                 redirectURI: new URL("/redirect", urlBase(mode)),
                 tokenRevocationEndpoint:
                     "https://discord.com/api/v10/oauth2/token/revoke",
-                codeChallengeMethod: "S256",
                 scopes: ["identify", "guilds.members.read"],
-                authenticateWith: "request_body",
             },
             async ({ tokens }) => {
                 const discordMeRes = await fetch(
                     "https://discord.com/api/v10/users/@me",
                     {
                         headers: {
-                            Authorization: `Bearer ${tokens.access_token}`,
+                            Authorization: `Bearer ${tokens.accessToken()}`,
                         },
                     },
                 );
@@ -65,7 +44,7 @@ export const getAuthenticator = (
                     id: string;
                 }>();
                 return {
-                    discordToken: tokens.access_token,
+                    discordToken: tokens.accessToken(),
                     discordId,
                 };
             },
@@ -79,13 +58,31 @@ export type GitHubAssociation = {
     id: string;
     name: string;
 };
+const fetchGitHubUser = async (
+    accessToken: string,
+): Promise<GitHubAssociation> => {
+    const res = await fetch("https://api.github.com/user", {
+        headers: {
+            Accept: "application/vnd.github+json",
+            Authorization: `Bearer ${accessToken}`,
+            "X-GitHub-Api-Version": "2022-11-28",
+        },
+    });
+    const { id, login, name } = await res.json<{
+        id: number;
+        login: string;
+        name: string | null;
+    }>();
+    return {
+        id: id.toString(),
+        name: name ?? login,
+    };
+};
 export const getGithubAssocAuthenticator = (
     githubClientSecret: string,
     mode: string,
 ) => {
-    const assocAuthenticator = new Authenticator<GitHubAssociation>(
-        createMemorySessionStorage(),
-    );
+    const assocAuthenticator = new Authenticator<GitHubAssociation>();
 
     assocAuthenticator.use(
         new GitHubStrategy(
@@ -97,9 +94,7 @@ export const getGithubAssocAuthenticator = (
                     urlBase(mode),
                 ),
             },
-            async ({ profile }) => {
-                return { id: profile.id, name: profile.displayName };
-            },
+            ({ tokens }) => fetchGitHubUser(tokens.accessToken()),
         ),
         "github-oauth",
     );
@@ -114,9 +109,7 @@ export const getTwitterAssocAuthenticator = (
     twitterClientSecret: string,
     mode: string,
 ) => {
-    const assocAuthenticator = new Authenticator<TwitterAssociation>(
-        createMemorySessionStorage(),
-    );
+    const assocAuthenticator = new Authenticator<TwitterAssociation>();
     assocAuthenticator.use(
         new OAuth2Strategy(
             {
@@ -129,18 +122,16 @@ export const getTwitterAssocAuthenticator = (
                     urlBase(mode),
                 ),
                 scopes: ["tweet.read", "users.read"],
-                codeChallengeMethod: "S256",
-                authenticateWith: "http_basic_auth",
             },
             async ({ tokens }) => {
                 const params = new URLSearchParams({
                     "user.fields": "id,username",
                 });
                 const meRes = await fetch(
-                    "https://api.twitter.com/2/users/me?" + params,
+                    `https://api.twitter.com/2/users/me?${params}`,
                     {
                         headers: {
-                            Authorization: `Bearer ${tokens.access_token}`,
+                            Authorization: `Bearer ${tokens.accessToken()}`,
                         },
                     },
                 );

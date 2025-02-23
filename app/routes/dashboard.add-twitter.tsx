@@ -4,28 +4,28 @@ import type { JSX } from "react";
 import {
     getAuthenticator,
     getTwitterAssocAuthenticator,
+    type Member,
 } from "../.server/store/auth";
+import { sessionCookie } from "../.server/store/cookie";
 
 export async function action({ request, context }: ActionFunctionArgs) {
-    const {
-        COOKIE_SECRET,
-        DISCORD_CLIENT_SECRET,
-        TWITTER_CLIENT_SECRET,
-        NODE_ENV,
-    } = context.cloudflare.env;
-    await getAuthenticator(
-        COOKIE_SECRET,
-        DISCORD_CLIENT_SECRET,
-        NODE_ENV,
-    ).isAuthenticated(request, {
-        failureRedirect: "/",
-    });
-    return getTwitterAssocAuthenticator(
-        TWITTER_CLIENT_SECRET,
-        NODE_ENV,
-    ).authenticate("twitter-oauth", request, {
-        failureRedirect: "/dashboard",
-    });
+    const { COOKIE_SECRET, TWITTER_CLIENT_SECRET, NODE_ENV } =
+        context.cloudflare.env;
+    const cookie = request.headers.get("cookie");
+    const user = (await sessionCookie(COOKIE_SECRET).parse(
+        cookie,
+    )) as Member | null;
+    if (!user) {
+        return redirect("/");
+    }
+    try {
+        return getTwitterAssocAuthenticator(
+            TWITTER_CLIENT_SECRET,
+            NODE_ENV,
+        ).authenticate("twitter-oauth", request);
+    } catch {
+        return redirect("/dashboard");
+    }
 }
 
 export async function loader() {
