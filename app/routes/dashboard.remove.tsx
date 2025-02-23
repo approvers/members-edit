@@ -1,8 +1,8 @@
 import { type ActionFunctionArgs, redirect } from "@remix-run/cloudflare";
 import type { JSX } from "react";
 
-import type { Member } from "../.server/store/auth";
 import { getAssociationLinks } from "../.server/store/association";
+import type { Member } from "../.server/store/auth";
 import { sessionCookie } from "../.server/store/cookie";
 
 export async function action({ request, context }: ActionFunctionArgs) {
