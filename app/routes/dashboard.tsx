@@ -1,8 +1,8 @@
-import type { LoaderFunctionArgs } from "react-router";
-import { Form, redirect, useLoaderData } from "react-router";
 import type { JSX } from "react";
 import { FaGithub, FaTwitter } from "react-icons/fa";
 import { MdDelete, MdOpenInNew } from "react-icons/md";
+import type { LoaderFunctionArgs } from "react-router";
+import { Form, redirect, useLoaderData } from "react-router";
 
 import {
     type AssociationLinks,

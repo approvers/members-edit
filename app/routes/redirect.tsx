@@ -1,5 +1,5 @@
-import { type LoaderFunctionArgs, redirect } from "react-router";
 import type { JSX } from "react";
+import { type LoaderFunctionArgs, redirect } from "react-router";
 
 import { getAuthenticator } from "../.server/store/auth";
 import { sessionCookie } from "../.server/store/cookie";

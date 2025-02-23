@@ -1,5 +1,5 @@
-import { type ActionFunctionArgs, redirect } from "react-router";
 import type { JSX } from "react";
+import { type ActionFunctionArgs, redirect } from "react-router";
 
 import { getAssociationLinks } from "../.server/store/association";
 import type { Member } from "../.server/store/auth";

@@ -1,5 +1,5 @@
-import { type LoaderFunctionArgs, redirect } from "react-router";
 import type { JSX } from "react";
+import { type LoaderFunctionArgs, redirect } from "react-router";
 
 import { getAssociationLinks } from "../.server/store/association";
 import {
