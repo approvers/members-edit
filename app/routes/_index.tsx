@@ -1,7 +1,8 @@
-import type { ActionFunctionArgs } from "@remix-run/cloudflare";
+import { type ActionFunctionArgs, redirect } from "@remix-run/cloudflare";
 import { Form } from "@remix-run/react";
 
 import { getAuthenticator } from "../.server/store/auth.js";
+import { sessionCookie } from "../.server/store/cookie.js";
 
 export default function Index() {
     return (
@@ -19,12 +20,21 @@ export default function Index() {
 export async function action({ request, context }: ActionFunctionArgs) {
     const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, NODE_ENV } =
         context.cloudflare.env;
-    return getAuthenticator(
-        COOKIE_SECRET,
-        DISCORD_CLIENT_SECRET,
-        NODE_ENV,
-    ).authenticate("discord-oauth", request, {
-        successRedirect: "/dashboard",
-        failureRedirect: "/",
-    });
+    try {
+        const store = sessionCookie(COOKIE_SECRET);
+        const user = await getAuthenticator(
+            DISCORD_CLIENT_SECRET,
+            NODE_ENV,
+        ).authenticate("discord-oauth", request);
+        return redirect("/dashboard", {
+            headers: {
+                "Set-Cookie": await store.serialize(user),
+            },
+        });
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            return redirect("/");
+        }
+        throw err;
+    }
 }

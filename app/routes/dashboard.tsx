@@ -8,18 +8,19 @@ import {
     type AssociationLinks,
     getAssociationLinks,
 } from "../.server/store/association";
-import { getAuthenticator } from "../.server/store/auth";
+import type { Member } from "../.server/store/auth";
+import { sessionCookie } from "../.server/store/cookie";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
-    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, NODE_ENV } =
-        context.cloudflare.env;
-    const { discordId } = await getAuthenticator(
-        COOKIE_SECRET,
-        DISCORD_CLIENT_SECRET,
-        NODE_ENV,
-    ).isAuthenticated(request, {
-        failureRedirect: "/",
-    });
+    const { COOKIE_SECRET } = context.cloudflare.env;
+    const cookie = request.headers.get("cookie");
+    const user = (await sessionCookie(COOKIE_SECRET).parse(
+        cookie,
+    )) as Member | null;
+    if (!user) {
+        return redirect("/");
+    }
+    const { discordId } = user;
     const associations = await getAssociationLinks(discordId);
     if (!Array.isArray(associations)) {
         return redirect("/");

@@ -1,16 +1,16 @@
-import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
+import { type LoaderFunctionArgs, redirect } from "@remix-run/cloudflare";
 import type { JSX } from "react";
 
-import { getAuthenticator } from "../.server/store/auth";
+import { sessionCookie } from "../.server/store/cookie";
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
-    const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, NODE_ENV } =
-        context.cloudflare.env;
-    await getAuthenticator(
-        COOKIE_SECRET,
-        DISCORD_CLIENT_SECRET,
-        NODE_ENV,
-    ).logout(request, { redirectTo: "/" });
+export async function loader({ context }: LoaderFunctionArgs) {
+    const { COOKIE_SECRET } = context.cloudflare.env;
+    const store = sessionCookie(COOKIE_SECRET);
+    return redirect("/", {
+        headers: {
+            "Set-Cookie": await store.serialize(null),
+        },
+    });
 }
 
 export default function Redirect(): JSX.Element {
