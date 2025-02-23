@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, redirect } from "@remix-run/cloudflare";
+import { type ActionFunctionArgs, redirect } from "react-router";
 import type { JSX } from "react";
 
 import { getAssociationLinks } from "../.server/store/association";

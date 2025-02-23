@@ -1,4 +1,4 @@
-import { type LoaderFunctionArgs, redirect } from "@remix-run/cloudflare";
+import { type LoaderFunctionArgs, redirect } from "react-router";
 import type { JSX } from "react";
 
 import { getAuthenticator } from "../.server/store/auth";

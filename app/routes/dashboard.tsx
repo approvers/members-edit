@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { Form, redirect, useLoaderData } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "react-router";
+import { Form, redirect, useLoaderData } from "react-router";
 import type { JSX } from "react";
 import { FaGithub, FaTwitter } from "react-icons/fa";
 import { MdDelete, MdOpenInNew } from "react-icons/md";

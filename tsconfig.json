@@ -13,7 +13,7 @@
         "isolatedModules": true,
         "jsx": "react-jsx",
         "incremental": true,
-        "types": ["@remix-run/cloudflare", "vite/client"],
+        "types": ["@react-router/cloudflare", "vite/client"],
         "verbatimModuleSyntax": true
     },
     "exclude": ["node_modules"]
