@@ -1,8 +1,6 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "members-edit"
 pages_build_output_dir = "./build/client"
-build.command = "bun run build"
-main = "src/index.ts"
 compatibility_date = "2024-08-21"
 compatibility_flags = ["nodejs_compat"]
 dev.port = 3000
