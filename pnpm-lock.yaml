@@ -49,7 +49,7 @@ importers:
         version: 3.4.1(remix-auth@4.2.0)
       zod:
         specifier: ^4.0.0
-        version: 4.2.1
+        version: 4.3.2
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.2
@@ -2550,8 +2550,8 @@ packages:
   zod@3.22.3:
     resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
 
-  zod@4.2.1:
-    resolution: {integrity: sha512-0wZ1IRqGGhMP76gLqz8EyfBXKk0J2qo2+H3fi4mcUP/KtTocoX08nmIAHl1Z2kJIZbZee8KOpBCSNPRgauucjw==}
+  zod@4.3.2:
+    resolution: {integrity: sha512-b8L8yn4rIVfiXyHAmnr52/ZEpDumlT0bmxiq3Ws1ybrinhflGpt12Hvv54kYnEsGPRs6o/Ka3/ppA2OWY21IVg==}
 
 snapshots:
 
@@ -5087,4 +5087,4 @@ snapshots:
 
   zod@3.22.3: {}
 
-  zod@4.2.1: {}
+  zod@4.3.2: {}
