@@ -65,10 +65,10 @@ importers:
         version: 25.1.0
       '@types/react':
         specifier: ^19.0.0
-        version: 19.2.10
+        version: 19.2.11
       '@types/react-dom':
         specifier: ^19.0.4
-        version: 19.2.3(@types/react@19.2.10)
+        version: 19.2.3(@types/react@19.2.11)
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.23(postcss@8.5.6)
@@ -1229,8 +1229,8 @@ packages:
     peerDependencies:
       '@types/react': ^19.2.0
 
-  '@types/react@19.2.10':
-    resolution: {integrity: sha512-WPigyYuGhgZ/cTPRXB2EwUw+XvsRA3GqHlsP4qteqrnnjDrApbS7MxcGr/hke5iUoeB7E/gQtrs9I37zAJ0Vjw==}
+  '@types/react@19.2.11':
+    resolution: {integrity: sha512-tORuanb01iEzWvMGVGv2ZDhYZVeRMrw453DCSAIn/5yvcSVnMoUMTyf33nQJLahYEnv9xqrTNbgz4qY5EfSh0g==}
 
   '@typescript-eslint/eslint-plugin@8.53.1':
     resolution: {integrity: sha512-cFYYFZ+oQFi6hUnBTbLRXfTJiaQtYE3t4O692agbBl+2Zy+eqSKWtPjhPXJu1G7j4RLjKgeJPDdq3EqOwmX5Ag==}
@@ -3471,11 +3471,11 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
-  '@types/react-dom@19.2.3(@types/react@19.2.10)':
+  '@types/react-dom@19.2.3(@types/react@19.2.11)':
     dependencies:
-      '@types/react': 19.2.10
+      '@types/react': 19.2.11
 
-  '@types/react@19.2.10':
+  '@types/react@19.2.11':
     dependencies:
       csstype: 3.2.3
 
