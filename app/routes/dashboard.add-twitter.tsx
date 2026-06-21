@@ -1,13 +1,14 @@
 import type { JSX } from "react";
-import { type ActionFunctionArgs, redirect } from "react-router";
+import { redirect } from "react-router";
 
 import {
     getTwitterAssocAuthenticator,
     type Member,
 } from "../.server/store/auth";
 import { sessionCookie } from "../.server/store/cookie";
+import type { Route } from "./+types/dashboard.add-twitter";
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({ request, context }: Route.ActionArgs) {
     const { COOKIE_SECRET, TWITTER_CLIENT_SECRET, NODE_ENV } =
         context.cloudflare.env;
     const cookie = request.headers.get("cookie");

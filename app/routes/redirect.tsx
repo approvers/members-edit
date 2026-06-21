@@ -3,6 +3,7 @@ import { type LoaderFunctionArgs, redirect } from "react-router";
 
 import { getAuthenticator } from "../.server/store/auth";
 import { sessionCookie } from "../.server/store/cookie";
+import type { Route } from "./+types/redirect";
 
 export default function Redirect(): JSX.Element {
     return (
@@ -12,7 +13,7 @@ export default function Redirect(): JSX.Element {
     );
 }
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
     const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, NODE_ENV } =
         context.cloudflare.env;
     const store = sessionCookie(COOKIE_SECRET);

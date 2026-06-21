@@ -1,9 +1,13 @@
-#:schema node_modules/wrangler/config-schema.json
+"$schema" = "./node_modules/wrangler/config-schema.json"
 name = "members-edit"
-pages_build_output_dir = "./build/client"
+main = "./worker/index.ts"
 compatibility_date = "2024-08-21"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat_v2"]
 dev.port = 3000
+
+[assets]
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
 
 [env.production.vars]
 NODE_ENV = "production"

@@ -10,8 +10,9 @@ import {
 } from "../.server/store/association";
 import type { Member } from "../.server/store/auth";
 import { sessionCookie } from "../.server/store/cookie";
+import type { Route } from "./+types/dashboard";
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
     const { COOKIE_SECRET } = context.cloudflare.env;
     const cookie = request.headers.get("cookie");
     const user = (await sessionCookie(COOKIE_SECRET).parse(

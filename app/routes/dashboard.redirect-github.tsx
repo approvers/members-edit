@@ -7,6 +7,7 @@ import {
     type Member,
 } from "../.server/store/auth";
 import { sessionCookie } from "../.server/store/cookie";
+import type { Route } from "./+types/dashboard.redirect-github";
 
 export default function Redirect(): JSX.Element {
     return (
@@ -16,7 +17,7 @@ export default function Redirect(): JSX.Element {
     );
 }
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
     const { COOKIE_SECRET, GITHUB_CLIENT_SECRET, NODE_ENV } =
         context.cloudflare.env;
     const cookie = request.headers.get("cookie");

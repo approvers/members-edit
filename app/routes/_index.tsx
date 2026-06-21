@@ -1,8 +1,9 @@
-import { type ActionFunctionArgs, redirect } from "react-router";
+import { redirect } from "react-router";
 import { Form } from "react-router";
 
 import { getAuthenticator } from "../.server/store/auth.js";
 import { sessionCookie } from "../.server/store/cookie.js";
+import type { Route } from "./+types/_index";
 
 export default function Index() {
     return (
@@ -17,7 +18,7 @@ export default function Index() {
     );
 }
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({ request, context }: Route.ActionArgs) {
     const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, NODE_ENV } =
         context.cloudflare.env;
     try {

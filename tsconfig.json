@@ -1,20 +1,27 @@
 {
     "compilerOptions": {
-        "target": "ES2015",
-        "lib": ["dom", "dom.iterable", "esnext"],
+        "rootDirs": [".", ".react-router/types"],
+        "target": "ES2022",
+        "lib": ["dom", "dom.iterable", "ES2022"],
         "allowJs": true,
         "skipLibCheck": true,
         "strict": true,
         "noEmit": true,
         "esModuleInterop": true,
-        "module": "esnext",
+        "module": "ES2022",
         "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "isolatedModules": true,
         "jsx": "react-jsx",
         "incremental": true,
-        "types": ["@react-router/cloudflare", "vite/client"],
+        "types": [
+            "./worker-configuration.d.ts",
+            "node",
+            "react",
+            "react-dom",
+            "vite/client"
+        ],
         "verbatimModuleSyntax": true
     },
-    "exclude": ["node_modules"]
+    "include": [".react-router/types/**/*", "*.ts", "app"]
 }

@@ -7,7 +7,11 @@ import { defineConfig } from "vite";
 export default defineConfig({
     plugins: [
         tailwindCss(),
-        cloudflare(),
+        cloudflare({
+            viteEnvironment: {
+                name: "ssr",
+            },
+        }),
         !process.env.VITEST ? reactRouter() : react(),
     ],
     resolve: {
