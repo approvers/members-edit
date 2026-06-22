@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { type LoaderFunctionArgs, redirect } from "react-router";
+import { redirect } from "react-router";
 
 import { getAssociationLinks } from "../.server/store/association";
 import {
@@ -7,6 +7,7 @@ import {
     type Member,
 } from "../.server/store/auth";
 import { sessionCookie } from "../.server/store/cookie";
+import { CloudflareContext } from "../cloudflare-context";
 import type { Route } from "./+types/dashboard.redirect-twitter";
 
 export default function Redirect(): JSX.Element {
@@ -19,7 +20,7 @@ export default function Redirect(): JSX.Element {
 
 export async function loader({ request, context }: Route.LoaderArgs) {
     const { COOKIE_SECRET, TWITTER_CLIENT_SECRET, NODE_ENV } =
-        context.cloudflare.env;
+        context.get(CloudflareContext).cloudflare.env;
     const cookie = request.headers.get("cookie");
     const user = (await sessionCookie(COOKIE_SECRET).parse(
         cookie,

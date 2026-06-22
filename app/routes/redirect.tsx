@@ -1,8 +1,9 @@
 import type { JSX } from "react";
-import { type LoaderFunctionArgs, redirect } from "react-router";
+import { redirect } from "react-router";
 
 import { getAuthenticator } from "../.server/store/auth";
 import { sessionCookie } from "../.server/store/cookie";
+import { CloudflareContext } from "../cloudflare-context";
 import type { Route } from "./+types/redirect";
 
 export default function Redirect(): JSX.Element {
@@ -15,7 +16,7 @@ export default function Redirect(): JSX.Element {
 
 export async function loader({ request, context }: Route.LoaderArgs) {
     const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, NODE_ENV } =
-        context.cloudflare.env;
+        context.get(CloudflareContext).cloudflare.env;
     const store = sessionCookie(COOKIE_SECRET);
     try {
         const user = await getAuthenticator(

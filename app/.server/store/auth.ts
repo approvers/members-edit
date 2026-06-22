@@ -8,7 +8,7 @@ import {
     TWITTER_CLIENT_ID,
 } from "./consts";
 
-const urlBase = (mode: string) =>
+const urlBase = (mode?: string) =>
     mode === "production"
         ? "https://edit.members.approvers.dev"
         : "http://localhost:3000";
@@ -17,7 +17,10 @@ export type Member = {
     discordToken: string;
     discordId: string;
 };
-export const getAuthenticator = (discordClientSecret: string, mode: string) => {
+export const getAuthenticator = (
+    discordClientSecret: string,
+    mode?: string,
+) => {
     const authenticator = new Authenticator<Member>();
     authenticator.use(
         new OAuth2Strategy(
@@ -80,7 +83,7 @@ const fetchGitHubUser = async (
 };
 export const getGithubAssocAuthenticator = (
     githubClientSecret: string,
-    mode: string,
+    mode?: string,
 ) => {
     const assocAuthenticator = new Authenticator<GitHubAssociation>();
 
@@ -107,7 +110,7 @@ export type TwitterAssociation = {
 };
 export const getTwitterAssocAuthenticator = (
     twitterClientSecret: string,
-    mode: string,
+    mode?: string,
 ) => {
     const assocAuthenticator = new Authenticator<TwitterAssociation>();
     assocAuthenticator.use(

@@ -3,6 +3,7 @@ import { Form } from "react-router";
 
 import { getAuthenticator } from "../.server/store/auth.js";
 import { sessionCookie } from "../.server/store/cookie.js";
+import { CloudflareContext } from "../cloudflare-context.js";
 import type { Route } from "./+types/_index";
 
 export default function Index() {
@@ -20,7 +21,7 @@ export default function Index() {
 
 export async function action({ request, context }: Route.ActionArgs) {
     const { COOKIE_SECRET, DISCORD_CLIENT_SECRET, NODE_ENV } =
-        context.cloudflare.env;
+        context.get(CloudflareContext).cloudflare.env;
     try {
         const store = sessionCookie(COOKIE_SECRET);
         const user = await getAuthenticator(

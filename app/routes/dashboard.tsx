@@ -1,7 +1,6 @@
 import type { JSX } from "react";
 import { FaGithub, FaTwitter } from "react-icons/fa";
 import { MdDelete, MdOpenInNew } from "react-icons/md";
-import type { LoaderFunctionArgs } from "react-router";
 import { Form, redirect, useLoaderData } from "react-router";
 
 import {
@@ -10,10 +9,11 @@ import {
 } from "../.server/store/association";
 import type { Member } from "../.server/store/auth";
 import { sessionCookie } from "../.server/store/cookie";
+import { CloudflareContext } from "../cloudflare-context";
 import type { Route } from "./+types/dashboard";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
-    const { COOKIE_SECRET } = context.cloudflare.env;
+    const { COOKIE_SECRET } = context.get(CloudflareContext).cloudflare.env;
     const cookie = request.headers.get("cookie");
     const user = (await sessionCookie(COOKIE_SECRET).parse(
         cookie,
