@@ -1,15 +1,17 @@
 import type { JSX } from "react";
-import { type ActionFunctionArgs, redirect } from "react-router";
+import { redirect } from "react-router";
 
 import {
     getGithubAssocAuthenticator,
     type Member,
 } from "../.server/store/auth";
 import { sessionCookie } from "../.server/store/cookie";
+import { CloudflareContext } from "../cloudflare-context";
+import type { Route } from "./+types/dashboard.add-github";
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({ request, context }: Route.ActionArgs) {
     const { COOKIE_SECRET, GITHUB_CLIENT_SECRET, NODE_ENV } =
-        context.cloudflare.env;
+        context.get(CloudflareContext).cloudflare.env;
     const cookie = request.headers.get("cookie");
     const user = (await sessionCookie(COOKIE_SECRET).parse(
         cookie,

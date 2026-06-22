@@ -1,12 +1,14 @@
 import type { JSX } from "react";
-import { type ActionFunctionArgs, redirect } from "react-router";
+import { redirect } from "react-router";
 
 import { getAssociationLinks } from "../.server/store/association";
 import type { Member } from "../.server/store/auth";
 import { sessionCookie } from "../.server/store/cookie";
+import { CloudflareContext } from "../cloudflare-context";
+import type { Route } from "./+types/dashboard.remove";
 
-export async function action({ request, context }: ActionFunctionArgs) {
-    const { COOKIE_SECRET } = context.cloudflare.env;
+export async function action({ request, context }: Route.ActionArgs) {
+    const { COOKIE_SECRET } = context.get(CloudflareContext).cloudflare.env;
     const cookie = request.headers.get("cookie");
     const user = (await sessionCookie(COOKIE_SECRET).parse(
         cookie,
