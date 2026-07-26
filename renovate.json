@@ -31,10 +31,7 @@
         },
         {
             "groupName": "Cloudflare Wrangler packages",
-            "matchPackageNames": [
-                "wrangler",
-                "@cloudflare/**"
-            ]
+            "matchPackageNames": ["wrangler", "@cloudflare/**"]
         }
     ]
 }
