@@ -21,5 +21,17 @@
         "automerge": true,
         "assignees": ["MikuroXina"]
     },
-    "schedule": ["on the first day of the week"]
+    "schedule": ["on the first day of the week"],
+    "packageRules": [
+        {
+            "groupName": null,
+            "matchUpdateTypes": ["major"],
+            "autoApprove": false,
+            "automerge": false
+        },
+        {
+            "groupName": "Cloudflare Wrangler packages",
+            "matchPackageNames": ["wrangler", "@cloudflare/**"]
+        }
+    ]
 }
